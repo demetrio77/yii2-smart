@@ -1,0 +1,15 @@
+/*мною добавлено*/
+.jcrop-sprite  {
+	width: 100%;
+	height: auto;
+	max-height: 300px;
+	overflow: auto;
+}
+.jcrop-holder {
+	border: 1px dashed #ccc;
+}
+.jcrop-preview-pane {
+	display: inline-block;
+	border: 1px dashed #ccc;
+	background-repeat: no-repeat;
+}

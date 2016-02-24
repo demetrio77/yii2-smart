@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+.hide {
+	display: none;
+}
+.rating-md {
+  font-size: 1.3em;
+}
+.rating-lg {
+  font-size: 1.8em;
+  line-height: 110%;
+}
+.rating {
+	display: none;
+}
+.rating-container .rating-stars:before {
+  content: attr(data-content);
+  text-shadow: none;
+}
+.form-group >  .star-rating{
+	float: none;
+}
