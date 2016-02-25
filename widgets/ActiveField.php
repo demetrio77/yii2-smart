@@ -8,6 +8,8 @@ use yii\helpers\Html;
 use demetrio77\smartadmin\assets\StarRatingAsset;
 use demetrio77\smartadmin\assets\SpriteInputAsset;
 use yii\web\View;
+use demetrio77\smartadmin\assets\CkEditorAsset;
+use yii\helpers\Url;
 
 class ActiveField extends \yii\widgets\ActiveField
 {
@@ -135,16 +137,16 @@ class ActiveField extends \yii\widgets\ActiveField
     	return $this;
     }
     
-    /*public function ckEditor ( $options = [])
+    public function ckEditor ( $options = [])
     {
-    	$view = Yii::$app->getView();
-    	
-    	\backend\assets\CkEditorAsset::register( $view );
+    	$view = Yii::$app->getView();    	
+    	CkEditorAsset::register( $view );    	
     	$id = Html::getInputId($this->model, $this->attribute);
-    	
-    	$view->registerJs("$('#".$id."').ckeditor();");
+    	$view->registerJs("$('#".$id."').ckeditor({
+			filebrowserBrowseUrl: '".Url::toRoute(['//manager/ckeditor'])."'
+		});");
     	return $this->textarea( $options );
-    }*/
+    }
     
     public function dropDownListAutoComplete($items, $options = [])
     {
