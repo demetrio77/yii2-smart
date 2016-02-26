@@ -10,6 +10,7 @@ use demetrio77\smartadmin\assets\SpriteInputAsset;
 use yii\web\View;
 use demetrio77\smartadmin\assets\CkEditorAsset;
 use yii\helpers\Url;
+use demetrio77\smartadmin\assets\FileUploaderAsset;
 
 class ActiveField extends \yii\widgets\ActiveField
 {
@@ -269,6 +270,52 @@ class ActiveField extends \yii\widgets\ActiveField
     	$this->adjustLabelFor($options);
     
     	$this->parts['{input}'] = Html::activeTextInput($this->model, $this->attribute, $options);
+    	return $this;
+    }
+    
+	public function fileInput( $options = [] )
+    {
+    	$view = Yii::$app->getView();
+    	FileUploaderAsset::register( $view );
+    	 
+    	$fileUploaderOptions = [];
+    	$returnPath = false;
+    	
+    	if (isset($options['tmpl'])) {
+    		$fileUploaderOptions['tmpl'] = $options['tmpl'];
+    		unset($options['tmpl']);
+    	}
+    	else {
+    		$fileUploaderOptions['tmpl'] = 'upload,server,url,clear';
+    	}
+    	
+    	if (isset($options['callback'])) {
+    		$fileUploaderOptions['callback'] = $options['callback'];
+    		unset($options['callback']);
+    	}
+
+    	if (isset($options['returnPath'])) {
+    		$returnPath = $options['returnPath'];
+    		unset($options['returnPath']);
+    	}
+    	 
+    	$options = array_merge($this->inputOptions, $options);
+    	$this->adjustLabelFor($options);
+    	$name = Html::getInputName($this->model, $this->attribute);
+    	$id = Html::getInputId($this->model, $this->attribute);
+    	 
+    	$js = "$(document).ready(function(){
+    	       $('#".$id."').fileUploader({
+                   value	 : '".$this->model->{$this->attribute}."',
+                   ".(isset($fileUploaderOptions['tmpl'])?"tmpl:'".$fileUploaderOptions['tmpl']."',":'')."
+                   ".(isset($fileUploaderOptions['callback'])?"callback:".$fileUploaderOptions['callback'].',':'')."
+                   ".($returnPath ? "returnPath: true,":'')."
+                   name      : '".$name."',
+                   connector: '".Url::toRoute(['//manager/connector'])."'
+               });
+    	});";
+    	$view->registerJs($js);
+    	$this->parts['{input}'] = Html::activeHiddenInput($this->model, $this->attribute);
     	return $this;
     }
 }

@@ -19,7 +19,8 @@ class SmartAdminAsset extends BaseAsset
                     'css/font-awesome.min.css',
                     'css/smartadmin-production.min.css',
                     'css/smartadmin-skins.min.css',
-                    'css/fonts.css'
+                    'css/fonts.css',
+                    'css/styles.css'
     ];
     public $cssOptions = ['media' => 'screen', 'type' => 'text/css'];
     public $js = [
