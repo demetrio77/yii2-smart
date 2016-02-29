@@ -47,7 +47,7 @@ class UserIdBehavior extends AttributeBehavior
      */
     protected function getValue($event)
     {
-    	if (!Yii::$app->{$this->userComponent}) {
+    	if (!isset(Yii::$app->{$this->userComponent})) {
     		return ;
     	}
     	
