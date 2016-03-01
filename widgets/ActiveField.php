@@ -273,49 +273,53 @@ class ActiveField extends \yii\widgets\ActiveField
     	return $this;
     }
     
-	public function fileInput( $options = [] )
+    public function imageInput($options = [])
     {
-    	$view = Yii::$app->getView();
-    	FileUploaderAsset::register( $view );
-    	 
-    	$fileUploaderOptions = [];
-    	$returnPath = false;
+    	$options['isImage'] = true;
+    	return $this->fileInput($options);
+    }
+    
+	public function fileInput($options = [] )
+    {
+    	$defaults = [
+    		'returnPath' => false,
+    		'folder' => '',
+    		'alias'=>'',
+    		'isImage' => false,
+    		'filename' => false,
+    		'tmpl' => 'upload,server,url,clear',
+    		'callback' => false
+    	];
     	
-    	if (isset($options['tmpl'])) {
-    		$fileUploaderOptions['tmpl'] = $options['tmpl'];
-    		unset($options['tmpl']);
-    	}
-    	else {
-    		$fileUploaderOptions['tmpl'] = 'upload,server,url,clear';
+    	$options = ArrayHelper::merge($defaults, $options);
+    	
+    	$id = Html::getInputId($this->model, $this->attribute);
+    	$js = "$(document).ready(function(){
+    	    $('#".$id."').fileUploader({
+               value	 : '".$this->model->{$this->attribute}."',
+               tmpl:'".$options['tmpl']."',
+               ".($options['callback']?"callback:".$options['callback'].',':'')."
+               ".($options['returnPath'] ? "returnPath: true,":'')."
+               ".($options['isImage'] ? "isImage: true,":'')."
+               ".($options['filename'] ? "filename: '".$options['filename']."',":'')."
+               connector: '".Url::toRoute(['//manager/connector'])."',
+    	       alias: '".$options['alias']."',
+    	       folder: '".$options['folder']."'
+    		});
+    	});";
+    	
+    	foreach (array_keys($defaults) as $key) {
+    		if (isset($options[$key])) unset($options[$key]);
     	}
     	
-    	if (isset($options['callback'])) {
-    		$fileUploaderOptions['callback'] = $options['callback'];
-    		unset($options['callback']);
-    	}
-
-    	if (isset($options['returnPath'])) {
-    		$returnPath = $options['returnPath'];
-    		unset($options['returnPath']);
-    	}
-    	 
     	$options = array_merge($this->inputOptions, $options);
     	$this->adjustLabelFor($options);
-    	$name = Html::getInputName($this->model, $this->attribute);
-    	$id = Html::getInputId($this->model, $this->attribute);
-    	 
-    	$js = "$(document).ready(function(){
-    	       $('#".$id."').fileUploader({
-                   value	 : '".$this->model->{$this->attribute}."',
-                   ".(isset($fileUploaderOptions['tmpl'])?"tmpl:'".$fileUploaderOptions['tmpl']."',":'')."
-                   ".(isset($fileUploaderOptions['callback'])?"callback:".$fileUploaderOptions['callback'].',':'')."
-                   ".($returnPath ? "returnPath: true,":'')."
-                   name      : '".$name."',
-                   connector: '".Url::toRoute(['//manager/connector'])."'
-               });
-    	});";
-    	$view->registerJs($js);
     	$this->parts['{input}'] = Html::activeHiddenInput($this->model, $this->attribute);
+    	
+    	$view = Yii::$app->getView();
+    	FileUploaderAsset::register( $view );
+    	$view->registerJs($js);
+    	
     	return $this;
     }
 }
