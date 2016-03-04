@@ -309,18 +309,20 @@ class ActiveField extends \yii\widgets\ActiveField
     		'isImage' => false,
     		'filename' => false,
     		'tmpl' => 'upload,server,url,clear',
-    		'callback' => false
+    		'callback' => false,
+    		'prefixUrl'=>false
     	];
     	
     	$options = ArrayHelper::merge($defaults, $options);
-    	
     	$id = Html::getInputId($this->model, $this->attribute);
+    	
     	$js = "$(document).ready(function(){
     	    $('#".$id."').fileUploader({
                value	 : '".$this->model->{$this->attribute}."',
                tmpl:'".$options['tmpl']."',
                ".($options['callback']?"callback:".$options['callback'].',':'')."
                ".($options['returnPath'] ? "returnPath: true,":'')."
+               ".($options['prefixUrl'] ? "prefixUrl: '".$options['prefixUrl']."',":'')."
                ".($options['isImage'] ? "isImage: true,":'')."
                ".($options['filename'] ? "filename: '".$options['filename']."',":'')."
                connector: '".Url::toRoute(['//manager/connector'])."',

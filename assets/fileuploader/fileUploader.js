@@ -22,7 +22,8 @@
 		callback: false,
 		returnPath: false,
 		connector:'',
-		browse:''
+		browse:'',
+		prefixUrl:false
 	};
 	
 	var globalObjects = {};
@@ -171,12 +172,13 @@
 						$this.settings.value = value;
 						
 						if ($this.settings.isImage) {
-							$this.img.html( '<img src="'+value+'?'+Math.random()+'" width="120" />' );
+							var url = ($this.settings.prefixUrl?$this.settings.prefixUrl+'/':'')+value+'?'+Math.random();
+							$this.img.html( '<img src="'+url+'" width="120" />' );
 						}
 						else {
 							$this.img.html( '<span class="fa fa-lg fa-fw fa-file-o"></span>'+value);
 						}
-											
+					
 						$this.urlHide();
 						$this.uploadHide();
 					};
