@@ -140,12 +140,33 @@ class ActiveField extends \yii\widgets\ActiveField
     
     public function ckEditor ( $options = [])
     {
+		$route = ['//manager/ckeditor'];
+    	$defaults = [
+			'defaultFolder'=>false,
+			'configuration'=>'default',
+			'alias'=>false
+    	];
+    	$options = ArrayHelper::merge($defaults, $options);
+    	
+    	if ($options['defaultFolder']) {
+    		$route['defaultFolder'] = $options['defaultFolder'];
+    	}
+    	if ($options['alias']) {
+    		$route['alias'] = $options['alias'];
+    	}
+    	$route['configuration'] = $options['configuration'];
+    	
+    	foreach ($defaults as $key) {
+    		if (isset($options[$key])) unset($options['key']);
+    	}
+    	
     	$view = Yii::$app->getView();    	
     	CkEditorAsset::register( $view );    	
     	$id = Html::getInputId($this->model, $this->attribute);
     	$view->registerJs("$('#".$id."').ckeditor({
-			filebrowserBrowseUrl: '".Url::toRoute(['//manager/ckeditor'])."'
+    		filebrowserBrowseUrl: '".Url::toRoute($route)."'
 		});");
+    	
     	return $this->textarea( $options );
     }
     
@@ -303,6 +324,7 @@ class ActiveField extends \yii\widgets\ActiveField
                ".($options['isImage'] ? "isImage: true,":'')."
                ".($options['filename'] ? "filename: '".$options['filename']."',":'')."
                connector: '".Url::toRoute(['//manager/connector'])."',
+               browse: '".Url::toRoute(['//manager/browse'])."',
     	       alias: '".$options['alias']."',
     	       folder: '".$options['folder']."'
     		});
