@@ -10,10 +10,17 @@ class DateHelper
 	private static $monthsRod = [
 		'','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'
 	];
-	public static function month($i) 
+	private static $daysOfweek = [
+		'', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'
+	];
+	public static function month($i, $rod=false) 
 	{
 		$i = intval($i);
-		return isset(self::$months[$i])?self::$months[$i]:'';
+		return !$rod ? (isset(self::$months[$i])?self::$months[$i]:'') : (isset(self::$monthsRod[$i])?self::$monthsRod[$i]:'');
+	}
+	public static function dayOfWeek($day)
+	{
+		return isset(self::$daysOfweek[$day])?self::$daysOfweek[$day]:'';
 	}
 	public static function mysqlDate($date) 
 	{
