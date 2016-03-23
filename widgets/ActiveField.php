@@ -294,6 +294,13 @@ class ActiveField extends \yii\widgets\ActiveField
     	return $this;
     }
     
+    public function numberInput($options=[])
+    {
+     	parent::textInput($options);
+        $this->parts['{input}'] = Html::tag('div', Html::activeInput('number', $this->model, $this->attribute, $options), ['class' => 'input']);
+    	return $this;
+    }
+    
     public function imageInput($options = [])
     {
     	$options['isImage'] = true;
