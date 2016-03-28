@@ -59,7 +59,7 @@ function dkmodal()
 				type: 'submit',
 				caption: '',
 				hidden: false,
-				saveUrl: '',
+				url: '',
 				action: function(){},
 				beforeSave: function(){return true;},
 				afterSave: function(h){},
@@ -120,7 +120,7 @@ function dkmodal()
 								data: $('form', self.body ).serialize(),
 								dataType:'json',
 								type:'POST',
-								url: button.saveUrl,
+								url: button.url,
 								success: function(h) {
 									switch(h.status) {
 										//все хорошо, все сделано, больше ничего не надо, закрываем окно
