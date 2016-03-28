@@ -1,4 +1,4 @@
-function dkmodal()
+function dkmodal( options )
 {
 	var self = this;
 	this.id = '';
@@ -8,6 +8,11 @@ function dkmodal()
 	this.footer = undefined;
 	this.buttons = [];
 	this.onClose = function() {};
+	this.options = {
+		width: '600px'	
+	}
+	
+	$.extend(this.options, options);
 	
 	this.init = function() {
 		var id = Math.round(Math.random()*100000);
@@ -24,7 +29,7 @@ function dkmodal()
 				.attr('role','dialog')
 				.attr('aria-labelledby','myLargeModalLabel')
 				.attr('aria-hidden',true)
-				.html('<div class="modal-dialog"><div class="modal-content"><div class="modal-header">'+
+				.html('<div class="modal-dialog"' + (this.options.width ?'style="width:'+this.options.width+';"': '') + '><div class="modal-content"><div class="modal-header">'+
 			       		'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">'+
 			       		'</h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div>');
 		
