@@ -65,13 +65,15 @@ function dkmodal( options )
 				caption: '',
 				hidden: false,
 				url: '',
+				className:'',
 				action: function(){},
 				beforeSave: function(){return true;},
 				afterSave: function(h){},
 				afterValidate: function(h){return true;},
 				target: undefined,
 				loading: false,
-				id:''
+				id:'',
+				left: false
 			};
 			$.extend(button, elem);
 			
@@ -82,7 +84,17 @@ function dkmodal( options )
 			
 				case 'function':
 					var b = new $('<button>');
-					$(b).attr('type','button').addClass('btn').addClass('btn-primary').text(button.caption);
+					$(b).attr('type','button').addClass('btn');
+					if (button.className) {
+						$(b).addClass(button.className);
+					}
+					else {
+						$(b).addClass('btn-primary');
+					}
+					if (button.left) {
+						$(b).addClass('pull-left');
+					}
+					$(b).text(button.caption);
 					if (button.id) {
 						$(b).data('button-id', button.id);
 					}
@@ -103,7 +115,17 @@ function dkmodal( options )
 				case 'submit':
 				default:
 					var b = new $('<button>');
-					$(b).attr('type','button').addClass('btn').addClass('btn-primary').text(button.caption);
+					$(b).attr('type','button').addClass('btn');
+					if (button.className) {
+						$(b).addClass(button.className);
+					}
+					else {
+						$(b).addClass('btn-primary');
+					}
+					if (button.left) {
+						$(b).addClass('pull-left');
+					}
+					$(b).text(button.caption);
 					if (button.loading!==false) {
 						$(b).attr('data-loading-text', button.loading);
 					}

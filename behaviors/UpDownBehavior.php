@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @link https://github.com/yii2tech
+ * @copyright Copyright (c) 2015 Yii2tech
+ * @license [New BSD License](http://www.opensource.org/licenses/bsd-license.php)
+ */
+
 namespace demetrio77\smartadmin\behaviors;
 
 use Yii;
@@ -65,6 +71,7 @@ class UpDownBehavior extends Behavior
     	
     	return true;
     }
+    
     /**
      * Moves owner record by one position towards the end of the list.
      * @return boolean movement successful.
@@ -93,6 +100,7 @@ class UpDownBehavior extends Behavior
     	
     	return true;
     }
+    
     /**
      * Moves owner record to the start of the list.
      * @return boolean movement successful.
@@ -121,6 +129,7 @@ class UpDownBehavior extends Behavior
     	
     	return true;
     }
+    
     /**
      * Moves owner record to the end of the list.
      * @return boolean movement successful.
@@ -150,6 +159,7 @@ class UpDownBehavior extends Behavior
     	
     	return true;
     }
+    
     /**
      * Moves owner record to the specific position.
      * If specified position exceeds the total number of records,
@@ -214,6 +224,7 @@ class UpDownBehavior extends Behavior
     		return true;
     	}
     }
+    
     /**
      * Creates array of group attributes with their values.
      * @see subCategoryField
@@ -229,6 +240,7 @@ class UpDownBehavior extends Behavior
     	}
     	return $condition;
     }
+    
     /**
      * Finds the number of records which belongs to the group of the owner.
      * @see subCategoryField
@@ -339,118 +351,8 @@ class UpDownBehavior extends Behavior
     	);
 	}
 
-    /*public function moveUp()
-    {
-        $model = $this->owner;
-        $ordinal = $model->{$this->ordinalField} ;
-        if ($ordinal >0) {
-            $find = [ $this->ordinalField => $ordinal-1 ];
-            if ( $this->subCategoryField ) {
-                $find [ $this->subCategoryField ] = $model->{$this->subCategoryField} ;
-            }
-            if ( ( $prev = $model::findOne( $find ) ) !== null ) {
-                $prev->{$this->ordinalField}  = $ordinal;
-                $model->{$this->ordinalField} = $ordinal-1;
-                $prev->save();
-                $model->save();
-            }
-        }
-    }
-    
-    public function moveDown()
-    {
-        $model = $this->owner;
-        $ordinal = $model->{$this->ordinalField} ;
-        
-        $find = $this->subCategoryField ? [ $this->subCategoryField => $model->{$this->subCategoryField} ] : [] ;
-        $cnt = $model::find( $find )->count();
-        
-        if ($ordinal+1 < $cnt ) {
-            
-            $find [ $this->ordinalField ] = $ordinal+1;
-            if ( ( $next = $model::findOne( $find ) ) !== null ) {
-            	$next->{$this->ordinalField}  = $ordinal;
-            	$model->{$this->ordinalField} = $ordinal+1;
-            	$next->save();
-            	$model->save();
-            }
-        }
-    }
-    
-    public function moveTo( $newOrdinal )
-    {
-    	$model = $this->owner;
-    	$ordinal = $model->{$this->ordinalField};
-    	if ( $newOrdinal > $ordinal ) {
-    		$where = '('.$this->ordinalField.' <= :newOrdinal) AND ('.$this->ordinalField.' > :ordinal )';
-    		$params = [':newOrdinal' => $newOrdinal, ':ordinal' => $ordinal ];
-    		if ($this->subCategoryField) {
-    			$where .= ' AND ('.$this->subCategoryField.' = :f )';
-    			$params['f'] = $model->{$this->subCategoryField};
-    		}
-    		$model->updateAllCounters([ $this->ordinalField => -1 ], $where, $params);
-    		$model->{$this->ordinalField} = $newOrdinal;
-    		return $model->save();
-    	}
-    	elseif ( $newOrdinal < $ordinal ) {
-    		$where = '('.$this->ordinalField.' < :ordinal) AND ('.$this->ordinalField.' >= :newOrdinal )';
-    		$params = [':newOrdinal' => $newOrdinal, ':ordinal' => $ordinal ];
-    		
-    		if ($this->subCategoryField) {
-    			$where .= ' AND ('.$this->subCategoryField.' = :f )';
-    			$params['f'] = $model->{$this->subCategoryField};
-    		}
-    		$model->updateAllCounters([ $this->ordinalField => 1 ], $where, $params);
-    		$model->{$this->ordinalField} = $newOrdinal;
-    		return $model->save();
-    	}
-    	return false;
-    }
-    
-    public function events() 
-    {
-        return [
-	       ActiveRecord::EVENT_BEFORE_INSERT => 'beforeInsert',
-	       ActiveRecord::EVENT_AFTER_DELETE  => 'afterDelete' ,
-	       ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
-        ];
-    }
-    
-    public function beforeInsert( $event )
-    {
-        $model = $this->owner;
-        $find = $this->subCategoryField ? [ $this->subCategoryField => $model->{$this->subCategoryField} ] : [] ;
-        if ( $this->ordinalOnCreate == 'last') {
-        	$model->{$this->ordinalField} = $model::find()->where( $find )->count();
-        }
-        elseif ( $this->ordinalOnCreate == 'first' ) {
-        	$model->{$this->ordinalField} = 0;
-        	
-        	$where = '1';
-        	$params = [];
-        	
-        	if ($this->subCategoryField) {
-        		$where .= ' AND '.$this->subCategoryField.'=:f';
-        		$params [':f'] = $model->{$this->subCategoryField};
-        	}
-        	$model->updateAllCounters([ $this->ordinalField => 1 ], $where, $params );
-        }
-        elseif ( $this->ordinalOnCreate == 'asIs' ) {
-        	$ordinal = $model->{$this->ordinalField};
-        	
-        	$where = '('.$this->ordinalField . ' >= :ordinal) ';
-        	$params = [':ordinal' => $ordinal];
-        	
-        	if ($this->subCategoryField) {
-        		$where .= ' AND ('.$this->subCategoryField.'=:f)';
-        		$params [':f'] = $model->{$this->subCategoryField};
-        	}
-        	
-			$model->updateAllCounters([ $this->ordinalField => 1 ], $where, $params );
-        }
-    }
-    
-    public function beforeUpdate( $event ) 
+/*
+     public function beforeUpdate( $event ) 
     {
         if ( $this->subCategoryField ) {
             $model = $this->owner;
@@ -464,19 +366,5 @@ class UpDownBehavior extends Behavior
                 $model->{$this->ordinalField} = $model::find()->where( [ $this->subCategoryField => $model->{$this->subCategoryField} ] )->count();
             }   
         }
-    }
-    
-    public function afterDelete ( $event )
-    {
-        $model = $this->owner;
-        $ordinal = $model->{$this->ordinalField};
-        $where = $this->ordinalField.'>:ordinal';
-        $params = [':ordinal' => $ordinal];
-        
-        if ($this->subCategoryField) {
-            $where .= ' AND '.$this->subCategoryField.'=:f';
-            $params [':f'] = $model->{$this->subCategoryField};
-        }
-        $model->updateAllCounters([ $this->ordinalField => -1 ], $where, $params );
     }*/
 }
