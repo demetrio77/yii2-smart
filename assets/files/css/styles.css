@@ -40,3 +40,6 @@ media="screen"
   border-bottom-color: #ccc;
   border-right-color: #ccc;
 }
+.input-group .form-control.datepicker {
+	z-index: 1080 !important;
+}

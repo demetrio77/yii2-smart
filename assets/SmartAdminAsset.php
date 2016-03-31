@@ -32,5 +32,5 @@ class SmartAdminAsset extends BaseAsset
 	   'js/smartwidgets/jarvis.widget.min.js',
 	   'js/app.min.js',
     ];
-    public $depends = ['yii\web\YiiAsset'];
+    public $depends = ['yii\web\JqueryAsset'];
 }

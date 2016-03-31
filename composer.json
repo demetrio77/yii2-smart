@@ -13,7 +13,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.6"
+        "yiisoft/yii2": ">=2.0.6",
+        "2amigos/transliterator-helper": "*"
     },
     "autoload": {
         "psr-4": {
