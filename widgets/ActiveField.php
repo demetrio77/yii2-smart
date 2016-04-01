@@ -11,6 +11,7 @@ use yii\web\View;
 use demetrio77\smartadmin\assets\CkEditorAsset;
 use yii\helpers\Url;
 use demetrio77\smartadmin\assets\FileUploaderAsset;
+use demetrio77\smartadmin\assets\DateTimePickerAsset;
 
 class ActiveField extends \yii\widgets\ActiveField
 {
@@ -135,6 +136,28 @@ class ActiveField extends \yii\widgets\ActiveField
     public function dateDropDown( $options = [])
     {
     	$this->parts['{input}'] = Html::activeDateDropDown($this->model, $this->attribute, $options);
+    	return $this;
+    }
+    
+    public function dateTimeInput( $options = [])
+    {
+    	$view = Yii::$app->getView();
+    	DateTimePickerAsset::register( $view );
+    	
+    	$id = Html::getInputId($this->model, $this->attribute);
+    	 
+    	$view->registerJs("
+            $('#".$id."').datetimepicker({
+               locale: 'ru'
+            });
+    	");
+    	 
+    	$options = array_merge($this->inputOptions, $options);
+    	$this->adjustLabelFor($options);
+    	 
+    	$this->model->{$this->attribute} = date('d.m.Y H:i', $this->model->{$this->attribute});
+    	 
+    	$this->parts['{input}'] = '<div class="input"><div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).'<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div></div>';
     	return $this;
     }
     
