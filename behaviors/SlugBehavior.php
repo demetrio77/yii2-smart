@@ -6,7 +6,7 @@ use Yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 use yii\helpers\Inflector;
-use dosamigos\transliterator\TransliteratorHelper;
+use demetrio77\smartadmin\helpers\TransliteratorHelper;
 
 class SlugBehavior extends Behavior
 {
@@ -77,8 +77,9 @@ class SlugBehavior extends Behavior
     
     private function slugify( $value ) 
     {
-    	if (! $this->forceTranslit ) return $value;        
-        return Inflector::slug( TransliteratorHelper::process( $value ), '-', true );
+    	if (! $this->forceTranslit ) return $value;
+
+    	return Inflector::slug( TransliteratorHelper::process( $value ), '-', true );
     }
     
     private function isUniqueSlug( $value )
