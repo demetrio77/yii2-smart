@@ -8,7 +8,6 @@ use yii\helpers\Html;
 use demetrio77\smartadmin\assets\StarRatingAsset;
 use demetrio77\smartadmin\assets\SpriteInputAsset;
 use yii\web\View;
-use demetrio77\smartadmin\assets\CkEditorAsset;
 use yii\helpers\Url;
 use demetrio77\smartadmin\assets\FileUploaderAsset;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
@@ -184,7 +183,7 @@ class ActiveField extends \yii\widgets\ActiveField
     	}
     	
     	$view = Yii::$app->getView();    	
-    	CkEditorAsset::register( $view );    	
+    	\CkEditorAsset::register( $view );    	
     	$id = Html::getInputId($this->model, $this->attribute);
     	$view->registerJs("$('#".$id."').ckeditor({
     		filebrowserBrowseUrl: '".Url::toRoute($route)."'
