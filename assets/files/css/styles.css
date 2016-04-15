@@ -43,3 +43,11 @@ media="screen"
 .input-group .form-control.datepicker {
 	z-index: 1080 !important;
 }
+.modal-footer .radio-group-horizontal {
+	float:left;
+}
+.radio-group-horizontal .radio{
+	display: inline-block;
+	margin-right: 10px;
+	margin-top: 0;
+}

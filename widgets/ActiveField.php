@@ -260,7 +260,7 @@ class ActiveField extends \yii\widgets\ActiveField
     	$val = trim($this->model->{$this->attribute});
     	$x = 'null';
     	$y = 'null';
-    	
+    	$bg = false;
     	if ($val!='') {
     		$found = preg_match_all('/\-?(\d+)\w*? \-?(\d+)/', $val, $matches);
     		if ($found && $matches && isset($matches[1][0],$matches[2][0])) {
@@ -269,6 +269,10 @@ class ActiveField extends \yii\widgets\ActiveField
     		}
     	}
     	
+    	if (isset($options['background-color'])) {
+    		$bg = $options['background-color'];
+    		unset($options['background-color']);
+    	}
     	$options['class'] = (isset($options['class'])?$options['class'].' ':'').'form-control';
     	$id = Html::getInputId($this->model, $this->attribute);
     	
@@ -277,6 +281,7 @@ class ActiveField extends \yii\widgets\ActiveField
     		y: $y,
     		width: $width,
     		height: $height,
+    		".($bg ? "backgroundColor: '$bg',":"")."
     		sprite: '$sprite'
     	});", View::POS_READY);
     	
