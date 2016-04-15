@@ -229,6 +229,22 @@ function dkmodal( options )
 	}
 	
 	this.message = function(options){
+		var settings = {
+			title: '',
+			buttons: {},
+			afterLoad  : function() {},
+			onClose : function() {},
+			html: ''
+		};
 		
+		if (options) {
+			$.extend(settings, options);
+		}
+		
+		this.body.html(settings.html);
+		self.buttons = new buttons(settings.buttons);
+		settings.afterLoad();
+		self.onClose = function() { settings.onClose()};
+		self.open();
 	}
 }
