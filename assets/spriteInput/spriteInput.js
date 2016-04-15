@@ -7,7 +7,8 @@
 			y: 0,
 			width: 0,
 			height: 0,
-			sprite: ''
+			sprite: '',
+			backgroundColor: '#fff'
 		/*	name : 'imageUpload', //имя инпута для загрузки рисунка	
 			uploadUrl : 'upload',
 			progressUrl: 'progress',
@@ -91,7 +92,7 @@
 				minSize : [settings.width, settings.height],
 				maxSize : [settings.width, settings.height],
 				setSelect: [$this.x, $this.y, $this.x + settings.width, $this.y + settings.height],
-				bgColor: 'white',
+				bgColor: settings.backgroundColor,
 				bgOpacity: 0.5,
 				onChange : function(c){
 					$this.updateInputs(c);

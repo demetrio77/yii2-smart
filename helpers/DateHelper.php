@@ -54,7 +54,7 @@ class DateHelper
 	
 	public static function unixDate($u) 
 	{
-		return date('j',$u).' '.self::month(date('n',$u)).' '.date('Y',$u);
+		return date('j',$u).' '.self::month(date('n',$u), true).' '.date('Y',$u);
 	}
 	
 	public static function unixShortDate($u) 
@@ -105,6 +105,21 @@ class DateHelper
 		return [
 			'start' => mktime(0,0,0, $month,1,$year),
 			'finish' => mktime(0,0,0, $month2+1,1,$year2)
+		];
+	}
+	
+	public static function dayLimitsUnix($date1, $date2 = 0)
+	{
+		$start = self::mysqlToUnix($date1);
+		if (!$date2) {
+			$date2 = $date1;
+		}
+		
+		$finish =  self::mysqlToUnix($date2) + 24*60*60;
+		 
+		return [
+			'start' => $start,
+			'finish' => $finish
 		];
 	}
 	

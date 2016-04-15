@@ -75,6 +75,7 @@ function dkmodal( options )
 				id:'',
 				left: false
 			};
+			
 			$.extend(button, elem);
 			
 			switch (button.type) {
@@ -96,7 +97,7 @@ function dkmodal( options )
 					}
 					$(b).text(button.caption);
 					if (button.id) {
-						$(b).data('button-id', button.id);
+						$(b).attr('data-button-id', button.id);
 					}
 					if (button.hidden!=undefined && button.hidden) {
 						$(b).css('display','none');
@@ -106,7 +107,6 @@ function dkmodal( options )
 						if (button.beforeSave()) {
 							action();
 							button.afterSave();
-							self.close();
 						}
 					});
 					self.footer.append(b);
@@ -130,7 +130,7 @@ function dkmodal( options )
 						$(b).attr('data-loading-text', button.loading);
 					}
 					if (button.id) {
-						$(b).data('button-id', button.id);
+						$(b).attr('data-button-id', button.id);
 					}
 					if (button.hidden!=undefined && button.hidden) {
 						$(b).css('display','none');
@@ -221,7 +221,7 @@ function dkmodal( options )
 			settings.url, function(){
 				self.title.text(settings.title);
 				self.buttons = new buttons(settings.buttons);
-				settings.afterLoad();
+				settings.afterLoad(this);
 				self.onClose = function() { settings.onClose()};
 				self.open();
 			}
