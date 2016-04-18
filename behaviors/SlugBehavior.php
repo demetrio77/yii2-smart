@@ -24,6 +24,11 @@ class SlugBehavior extends Behavior
     	];
     }
     
+    public static function slug($value)
+    {
+    	return Inflector::slug( TransliteratorHelper::process( $value ), '-', true );
+    } 
+    
     public function getSlug( $event )
     {
     	$model = $this->owner;
@@ -78,8 +83,7 @@ class SlugBehavior extends Behavior
     private function slugify( $value ) 
     {
     	if (! $this->forceTranslit ) return $value;
-
-    	return Inflector::slug( TransliteratorHelper::process( $value ), '-', true );
+    	return self::slug($value);
     }
     
     private function isUniqueSlug( $value )
