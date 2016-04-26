@@ -76,7 +76,7 @@ class Html extends BaseHtml
 		$view = Yii::$app->getView();
 		DateDropDownAsset::register($view);
 		$view->registerJs("$('#".$id."').dateDropDown(".($opts?"{".implode(',', $opts)."}":'').");");
-		return '<div id="'.$id.'" class="row">'.static::activeHiddenInput($model, $attribute, $options).'</div>';
+		return '<div id="'.$id.'">'.static::activeHiddenInput($model, $attribute, $options).'</div>';
 	}
 	
 	public static function radio($name, $checked = false, $options = [])
