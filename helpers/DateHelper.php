@@ -59,6 +59,7 @@ class DateHelper
 	public static function mysqlDate($date) 
 	{
 		$date = self::clearDate($date);
+		if (!$date) return '';
 		$d = explode('-', $date);
 		switch (count($d)) {
 			case 1:
