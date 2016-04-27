@@ -34,7 +34,7 @@ class EMT_Tret_Text extends EMT_Tret
 					),
 					'replacement' 	=> array(
 							'\1',
-							'$m[1].($m[7] === backend\components\helpers\typograph\EMT_Lib::strtolower($m[3]) ? $m[2] : $m[2].$m[5].$m[6] )',
+							'$m[1].($m[7] === demetrio77\smartadmin\helpers\typograph\EMT_Lib::strtolower($m[3]) ? $m[2] : $m[2].$m[5].$m[6] )',
 					)
 			),
 			'paragraphs' => array(
@@ -95,7 +95,7 @@ class EMT_Tret_Text extends EMT_Tret
 	 */
 	protected function build_brs()
 	{
-		$this->_text = $this->preg_replace_e('/(\<\/' . self::BASE64_PARAGRAPH_TAG . '\>)([\r\n \t]+)(\<' . self::BASE64_PARAGRAPH_TAG . '\>)/mse', '$m[1].backend\components\helpers\typograph\EMT_Lib::iblock($m[2]).$m[3]', $this->_text);
+		$this->_text = $this->preg_replace_e('/(\<\/' . self::BASE64_PARAGRAPH_TAG . '\>)([\r\n \t]+)(\<' . self::BASE64_PARAGRAPH_TAG . '\>)/mse', '$m[1].demetrio77\smartadmin\helpers\typograph\EMT_Lib::iblock($m[2]).$m[3]', $this->_text);
 
 		if (!preg_match('/\<' . self::BASE64_BREAKLINE_TAG . '\>/', $this->_text)) {
 			$this->_text = str_replace("\r\n","\n",$this->_text);
