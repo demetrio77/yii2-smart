@@ -224,6 +224,9 @@ function dkmodal( options )
 				settings.afterLoad(this);
 				self.onClose = function() { settings.onClose()};
 				self.open();
+				$('form', self.body).submit( function(){
+					return false;
+				});
 			}
 		);
 	}
@@ -246,5 +249,8 @@ function dkmodal( options )
 		settings.afterLoad();
 		self.onClose = function() { settings.onClose()};
 		self.open();
+		$('form', self.body).submit( function(){
+			return false;
+		});
 	}
 }
