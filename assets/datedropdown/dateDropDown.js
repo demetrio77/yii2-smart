@@ -103,9 +103,12 @@
 					$this.setValue();
 				});
 				//appending selects to div
-				$this.prepend( $('<div>').addClass('col-xs-3 col-sm-3').css('padding-right','5px').append($this.daySelect) )
-					 .append( $('<div>').addClass('col-xs-6 col-sm-6').css('padding-right','5px').css('padding-left',0).append($this.monthSelect) )
-					 .append( $('<div>').addClass('col-xs-3 col-sm-3').css('padding-left',0).append($this.yearSelect) );
+				$this.addClass('input-group')
+					 .append($this.daySelect)
+					 .append('<div class="input-group-addon">-</div>')
+					 .append($this.monthSelect) 
+					 .append('<div class="input-group-addon">-</div>')
+					 .append($this.yearSelect) ;
 			}			
 			
 			$this.init();
