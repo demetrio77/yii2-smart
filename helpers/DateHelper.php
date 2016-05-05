@@ -41,8 +41,7 @@ class DateHelper
 		return false;
 	}
 	
-	
-	public static function month($i, $rod=false, $options) 
+	public static function month($i, $rod=false, $options=[]) 
 	{
 		$i = intval($i);
 		if ($i<1 || $i>12) return '';
@@ -130,6 +129,22 @@ class DateHelper
 			return $date;
 		}
 		return false;
+	}
+	
+	public static function dayLimitsUnix($date1, $date2 = 0)
+	{
+		$start = self::mysqlToUnix($date1);
+		
+		if (!$date2) {
+			$date2 = $date1;
+		}
+	
+		$finish =  self::mysqlToUnix($date2) + 24*60*60;
+			
+		return [
+			'start' => $start,
+			'finish' => $finish
+		];
 	}
 	
 	public static function monthLimitsUnix($year, $month, $year2=0, $month2 = 0)

@@ -131,7 +131,7 @@ class Html extends BaseHtml
 			unset($options['label'], $options['labelOptions']);
 			/*
 			 * добавлено
-			*/if (isset($options['class']) && $options['class']=='styled') {
+			*/if (isset($options['class']) && strpos($options['class'],'styled')!==false) {
 			$options['id'] = 'check-'.$name.'-'.$value;
 			$content = static::input('checkbox', $name, $value, $options).' '.static::label($label, $options['id'], $labelOptions);
 			}
