@@ -8,21 +8,12 @@ use yii\helpers\Html;
 use demetrio77\smartadmin\assets\StarRatingAsset;
 use demetrio77\smartadmin\assets\SpriteInputAsset;
 use yii\web\View;
-use demetrio77\smartadmin\assets\CkEditorAsset;
 use yii\helpers\Url;
 use demetrio77\smartadmin\assets\FileUploaderAsset;
+use demetrio77\smartadmin\assets\DateTimePickerAsset;
 
 class ActiveField extends \yii\widgets\ActiveField
 {
-    /**
-     * Селект с данными из связанной модели
-     * @param string $lookupModelName
-     * @param string $lookupModelField
-     * @param array $params
-     * @param array $options
-     * @return Ambigous <\yii\widgets\static, \common\widgets\ActiveField>
-     */
-	
 	public $options = ['tag' => 'section'];
 	public $labelOptions = ['class' => 'label'];
 	
@@ -45,6 +36,43 @@ class ActiveField extends \yii\widgets\ActiveField
 		parent::textarea($options);
 		$this->parts['{input}'] = Html::tag('div', $this->parts['{input}'], ['class' => 'textarea']);
 		return $this;
+	}
+	
+	public function strongPassword($options = [])
+	{
+		$length = 8;
+		
+		if (isset($options['length'])) {
+			$length = $options['length'];
+			unset($options['length']);
+		}
+		
+		$view = Yii::$app->getView();
+		$id = Html::getInputId($this->model, $this->attribute);
+		
+		$this->template = "{label}\n{input}
+			<div class='input-group'>
+				<div id='{$id}-text' style='line-height:32px; text-indent: 10px;' class='form-control'></div>
+				<div class='input-group-addon' style='padding:0'>
+					<a id='{$id}-button' class='btn btn-xs btn-warning'>Генерировать</a>
+				</div>
+    		</div>\n{hint}\n{error}";
+		
+		$view->registerJs("
+			$('#{$id}-button').click( function(){
+				var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+	    		var string_length = $length;
+	    		var randomstring = '';
+	    		for (var i=0; i<string_length; i++) {
+	        		var rnum = Math.floor(Math.random() * chars.length);
+	        		randomstring += chars.substring(rnum,rnum+1);
+	    		}
+	    		$('#$id').val(randomstring);
+				$('#{$id}-text').text(randomstring);
+			});	
+		", View::POS_READY);
+		
+		return $this->hiddenInput($options);
 	}
 	
     public function lookupDropDownList( $lookupModelName, $lookupModelField, $params=[], $options = [] )
@@ -138,6 +166,28 @@ class ActiveField extends \yii\widgets\ActiveField
     	return $this;
     }
     
+    public function dateTimeInput( $options = [])
+    {
+    	$view = Yii::$app->getView();
+    	DateTimePickerAsset::register( $view );
+    	
+    	$id = Html::getInputId($this->model, $this->attribute);
+    	 
+    	$view->registerJs("
+            $('#".$id."').datetimepicker({
+               locale: 'ru'
+            });
+    	");
+    	 
+    	$options = array_merge($this->inputOptions, $options);
+    	$this->adjustLabelFor($options);
+    	 
+    	$this->model->{$this->attribute} = date('d.m.Y H:i', $this->model->{$this->attribute});
+    	 
+    	$this->parts['{input}'] = '<div class="input"><div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).'<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div></div>';
+    	return $this;
+    }
+    
     public function ckEditor ( $options = [])
     {
 		$route = ['//manager/ckeditor'];
@@ -161,7 +211,7 @@ class ActiveField extends \yii\widgets\ActiveField
     	}
     	
     	$view = Yii::$app->getView();    	
-    	CkEditorAsset::register( $view );    	
+    	\CkEditorAsset::register( $view );    	
     	$id = Html::getInputId($this->model, $this->attribute);
     	$view->registerJs("$('#".$id."').ckeditor({
     		filebrowserBrowseUrl: '".Url::toRoute($route)."'
@@ -238,7 +288,7 @@ class ActiveField extends \yii\widgets\ActiveField
     	$val = trim($this->model->{$this->attribute});
     	$x = 'null';
     	$y = 'null';
-    	
+    	$bg = false;
     	if ($val!='') {
     		$found = preg_match_all('/\-?(\d+)\w*? \-?(\d+)/', $val, $matches);
     		if ($found && $matches && isset($matches[1][0],$matches[2][0])) {
@@ -247,6 +297,10 @@ class ActiveField extends \yii\widgets\ActiveField
     		}
     	}
     	
+    	if (isset($options['background-color'])) {
+    		$bg = $options['background-color'];
+    		unset($options['background-color']);
+    	}
     	$options['class'] = (isset($options['class'])?$options['class'].' ':'').'form-control';
     	$id = Html::getInputId($this->model, $this->attribute);
     	
@@ -255,6 +309,7 @@ class ActiveField extends \yii\widgets\ActiveField
     		y: $y,
     		width: $width,
     		height: $height,
+    		".($bg ? "backgroundColor: '$bg',":"")."
     		sprite: '$sprite'
     	});", View::POS_READY);
     	
@@ -291,6 +346,13 @@ class ActiveField extends \yii\widgets\ActiveField
     	$this->adjustLabelFor($options);
     
     	$this->parts['{input}'] = Html::activeTextInput($this->model, $this->attribute, $options);
+    	return $this;
+    }
+    
+    public function numberInput($options=[])
+    {
+     	parent::textInput($options);
+        $this->parts['{input}'] = Html::tag('div', Html::activeInput('number', $this->model, $this->attribute, $options), ['class' => 'input']);
     	return $this;
     }
     

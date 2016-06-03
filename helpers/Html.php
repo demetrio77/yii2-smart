@@ -7,6 +7,7 @@ use yii\helpers\BaseHtml;
 use demetrio77\smartadmin\assets\Select2Asset;
 use demetrio77\smartadmin\assets\DateDropDownAsset;
 use demetrio77\smartadmin\widgets\JarvisWidget;
+use demetrio77\smartadmin\assets\DateTimePickerAsset;
 
 class Html extends BaseHtml
 {
@@ -75,7 +76,7 @@ class Html extends BaseHtml
 		$view = Yii::$app->getView();
 		DateDropDownAsset::register($view);
 		$view->registerJs("$('#".$id."').dateDropDown(".($opts?"{".implode(',', $opts)."}":'').");");
-		return '<div id="'.$id.'" class="row">'.static::activeHiddenInput($model, $attribute, $options).'</div>';
+		return '<div id="'.$id.'">'.static::activeHiddenInput($model, $attribute, $options).'</div>';
 	}
 	
 	public static function radio($name, $checked = false, $options = [])
@@ -130,7 +131,7 @@ class Html extends BaseHtml
 			unset($options['label'], $options['labelOptions']);
 			/*
 			 * добавлено
-			*/if (isset($options['class']) && $options['class']=='styled') {
+			*/if (isset($options['class']) && strpos($options['class'],'styled')!==false) {
 			$options['id'] = 'check-'.$name.'-'.$value;
 			$content = static::input('checkbox', $name, $value, $options).' '.static::label($label, $options['id'], $labelOptions);
 			}
@@ -147,5 +148,23 @@ class Html extends BaseHtml
 			$labelOptions['class'] = (isset($labelOptions['class'])?$labelOptions['class'].' ':'').'checkbox';
 			return $hidden . self::tag('label', static::input('checkbox', $name, $value, $options).self::tag('i'), $labelOptions);
 		}
+	}
+	
+	public static function activeDateTimeInput($model, $attribute, $options = [])
+	{
+		$view = Yii::$app->getView();
+		DateTimePickerAsset::register( $view );
+		 
+		$id = Html::getInputId($model, $attribute);
+	
+		$view->registerJs("
+            $('#".$id."').datetimepicker({
+               locale: 'ru'
+            });
+    	");
+		
+		$options['class'] = 'form-control'.(isset($options['class'])?' '.$options['class']:'');
+
+		return self::tag('label', self::activeTextInput($model, $attribute, $options), ['class' => 'input']);
 	}
 }

@@ -13,11 +13,44 @@ class DateHelper
 	private static $daysOfweek = [
 		'', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'
 	];
-	public static function month($i, $rod=false) 
+	private static $roman = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+		
+	public static function getDate( $date, $options=[] )
+	{
+		if (isset($options['separator'])) $separator = $options['separator'];
+		elseif (isset($options['roman']) && $options['roman']) $separator = '.';
+		else $separator = ' ';
+	
+		$date = self::clearDate($date);
+	
+		$d = explode('-', $date);
+		switch (count($d)) {
+			case 1:
+				if (intval($d[0]))
+					return intval($d[0]);
+					break;
+			case 2:
+				$month = self::month($d[1], false, $options);
+				return $month.(intval($d[0])? $separator.intval($d[0]):'');
+			case 3:
+				return
+				((intval($d[2]) && intval($d[2])<=31)?intval($d[2]).$separator:'').
+				self::month($d[1], true, $options).
+				(intval($d[0])?$separator.intval($d[0]):'');
+		}
+		return false;
+	}
+	
+	public static function month($i, $rod=false, $options=[]) 
 	{
 		$i = intval($i);
+		if ($i<1 || $i>12) return '';
+		if (isset($options['roman']) && $options['roman']) {
+			return self::$roman[$i];
+		}
 		return !$rod ? (isset(self::$months[$i])?self::$months[$i]:'') : (isset(self::$monthsRod[$i])?self::$monthsRod[$i]:'');
 	}
+	
 	public static function dayOfWeek($day)
 	{
 		return isset(self::$daysOfweek[$day])?self::$daysOfweek[$day]:'';
@@ -25,6 +58,7 @@ class DateHelper
 	public static function mysqlDate($date) 
 	{
 		$date = self::clearDate($date);
+		if (!$date) return '';
 		$d = explode('-', $date);
 		switch (count($d)) {
 			case 1:
@@ -97,6 +131,22 @@ class DateHelper
 		return false;
 	}
 	
+	public static function dayLimitsUnix($date1, $date2 = 0)
+	{
+		$start = self::mysqlToUnix($date1);
+		
+		if (!$date2) {
+			$date2 = $date1;
+		}
+	
+		$finish =  self::mysqlToUnix($date2) + 24*60*60;
+			
+		return [
+			'start' => $start,
+			'finish' => $finish
+		];
+	}
+	
 	public static function monthLimitsUnix($year, $month, $year2=0, $month2 = 0)
 	{
 		if (!$year2 && !$month2) {
@@ -108,7 +158,17 @@ class DateHelper
 		];
 	}
 	
-	private static function clearDate( $date )
+	public static function fillIfEmpty( $date )
+	{
+		$d = explode('-', $date);
+		$v = [];
+		$v[] = (isset($d[0]) && intval($d[0]))?$d[0]:'00';
+		$v[] = (isset($d[1]) && intval($d[1]))?$d[1]:'00';
+		$v[] = (isset($d[2]) && intval($d[2]))?$d[2]:'00';
+		return implode('-', $v);
+	}
+	
+	public static function clearDate( $date )
 	{
 		$d = explode('-', $date);
 		$v = [];
