@@ -11,6 +11,7 @@ use yii\web\View;
 use yii\helpers\Url;
 use demetrio77\smartadmin\assets\FileUploaderAsset;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
+use demetrio77\smartadmin\assets\ColorPickerAsset;
 
 class ActiveField extends \yii\widgets\ActiveField
 {
@@ -131,10 +132,10 @@ class ActiveField extends \yii\widgets\ActiveField
     	return $this->dropDownList( $items, $options );
     }
     
-    /*public function colorInput( $options = [] )
+    public function colorInput( $options = [] )
     {
         $view = Yii::$app->getView();
-        \backend\assets\ColorPickerAsset::register( $view );
+        ColorPickerAsset::register( $view );
         $id = Html::getInputId($this->model, $this->attribute);
         $view->registerJs("
             $('#".$id."').colorpicker().on('changeColor', function(ev) {
@@ -143,7 +144,7 @@ class ActiveField extends \yii\widgets\ActiveField
         );
         $options[ 'style'] = 'background-color: '.$this->model->{ $this->attribute};
         return $this->textInput( $options );
-    }*/
+    }
     
     public function dateInput( $options = [])
     {

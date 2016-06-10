@@ -84,3 +84,6 @@ media="screen"
   padding: 3px 4px;
   margin-right: 2px;
 }
+.colorpicker { 
+  z-index: 1051;
+}
