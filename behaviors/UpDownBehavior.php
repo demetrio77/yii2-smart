@@ -41,10 +41,10 @@ class UpDownBehavior extends Behavior
     
     public function init()
     {
+    	parent::init();
     	if (is_string($this->subCategoryField)) {
     		$this->subCategoryField = [ $this->subCategoryField ];
     	}
-    	return parent::init();
     }
     
     public function moveUp()
@@ -108,8 +108,8 @@ class UpDownBehavior extends Behavior
     public function moveFirst()
     {
     	$ordinalField = $this->ordinalField;
-    	if ($this->owner->$ordinalField == 1) {
-    		return false;
+    	if ($this->owner->$ordinalField == 0) {
+    		return true;
     	}
     	
     	$this->owner->updateAllCounters(
@@ -124,7 +124,7 @@ class UpDownBehavior extends Behavior
     	);
     	
     	$this->owner->updateAttributes([
-    		$ordinalField => 1
+    		$ordinalField => 0
     	]);
     	
     	return true;
@@ -139,8 +139,8 @@ class UpDownBehavior extends Behavior
     	$ordinalField = $this->ordinalField;
     	$recordsCount = $this->countGroupRecords();
     	
-    	if ($this->owner->getAttribute($ordinalField) == $recordsCount) {
-    		return false;
+    	if ($this->owner->getAttribute($ordinalField) == $recordsCount-1) {
+    		return true;
     	}
     	$this->owner->updateAllCounters(
     		[
@@ -154,7 +154,7 @@ class UpDownBehavior extends Behavior
     	);
     	
     	$this->owner->updateAttributes([
-    		$ordinalField => $recordsCount
+    		$ordinalField => $recordsCount-1
     	]);
     	
     	return true;
@@ -204,7 +204,7 @@ class UpDownBehavior extends Behavior
     		// Move Down:
     		$recordsCount = $this->countGroupRecords();
     		if ($position >= $recordsCount) {
-    			return $this->moveLast();
+    			return false;
     		}
     		$this->owner->updateAllCounters(
     			[
