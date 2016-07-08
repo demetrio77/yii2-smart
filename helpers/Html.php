@@ -3,13 +3,13 @@
 namespace yii\helpers;
 
 use Yii;
-use yii\helpers\BaseHtml;
 use demetrio77\smartadmin\assets\Select2Asset;
 use demetrio77\smartadmin\assets\DateDropDownAsset;
 use demetrio77\smartadmin\widgets\JarvisWidget;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
+use demetrio77\smartadmin\helpers\DkBaseHtml;
 
-class Html extends BaseHtml
+class Html extends DkBaseHtml
 {
 	public static $jarwisWidget=false;
 	
@@ -50,35 +50,9 @@ class Html extends BaseHtml
 	
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
-		$view = Yii::$app->getView();
-		Select2Asset::register( $view );
-		$id = self::getInputId($model, $attribute);
-		$view->registerJs("$('#".$id."').select2();");
-		return self::tag('label', static::activeListInput('dropDownList', $model, $attribute, $items, $options), ['class' => 'input']);
+		return self::tag('label', parent::activeSelect2($model, $attribute, $items, $options), ['class' => 'input']);
 	}
-	
-	public static function activeDateDropDown($model, $attribute, $options = [])
-	{
-		$opts = [];
-		if (isset($options['minYear'])) {
-			$opts[] = "minYear: ".$options['minYear'];
-			unset($options['minYear']);
-		}
-		if (isset($options['maxYear'])) {
-			$opts[] = "maxYear: ".$options['maxYear'];
-			unset($options['maxYear']);
-		}
-		if (isset($options['defaultDate'])) {
-			$opts[] = "defaultDate: '".$options['defaultDate']."'";
-			unset($options['defaultDate']);
-		}
-		$id = Html::getInputId($model, $attribute).'Div';
-		$view = Yii::$app->getView();
-		DateDropDownAsset::register($view);
-		$view->registerJs("$('#".$id."').dateDropDown(".($opts?"{".implode(',', $opts)."}":'').");");
-		return '<div id="'.$id.'">'.static::activeHiddenInput($model, $attribute, $options).'</div>';
-	}
-	
+		
 	public static function radio($name, $checked = false, $options = [])
 	{
 		$options['checked'] = (bool) $checked;
@@ -152,19 +126,6 @@ class Html extends BaseHtml
 	
 	public static function activeDateTimeInput($model, $attribute, $options = [])
 	{
-		$view = Yii::$app->getView();
-		DateTimePickerAsset::register( $view );
-		 
-		$id = Html::getInputId($model, $attribute);
-	
-		$view->registerJs("
-            $('#".$id."').datetimepicker({
-               locale: 'ru'
-            });
-    	");
-		
-		$options['class'] = 'form-control'.(isset($options['class'])?' '.$options['class']:'');
-
-		return self::tag('label', self::activeTextInput($model, $attribute, $options), ['class' => 'input']);
+		return self::tag('label', parent::activeDateTimeInput($model, $attribute, $options), ['class' => 'input']);
 	}
 }
