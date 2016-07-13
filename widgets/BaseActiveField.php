@@ -15,6 +15,15 @@ use yii\helpers\Url;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
+	public function init()
+	{
+		parent::init();
+		
+		if ( property_exists($this->form, 'layout') && $this->form->layout == 'horizontal') {
+			$this->template = $this->form->horizontalFieldTemplate;
+		}
+	}
+	
 	public function strongPassword($options = [])
 	{
 		$length = 8;
