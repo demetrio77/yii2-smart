@@ -19,7 +19,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		parent::init();
 		
-		if ( property_exists($this->form, 'layout') && $this->form->layout == 'horizontal') {
+		if ( property_exists($this->form, 'layout') && $this->form->layout == ActiveForm::LAYOUT_HORIZONTAL) {
 			$this->template = $this->form->horizontalFieldTemplate;
 		}
 	}
