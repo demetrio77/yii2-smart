@@ -15,12 +15,15 @@ use yii\helpers\Url;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
+	public $labelCols = 3;
+	public $inputCols = 9;
+	
 	public function init()
 	{
 		parent::init();
 		
 		if ( property_exists($this->form, 'layout') && $this->form->layout == ActiveForm::LAYOUT_HORIZONTAL) {
-			$this->template = $this->form->horizontalFieldTemplate;
+			$this->template = str_replace(['{labelCols}','{inputCols}'], [$this->labelCols,$this->inputCols], $this->form->horizontalFieldTemplate);
 		}
 	}
 	

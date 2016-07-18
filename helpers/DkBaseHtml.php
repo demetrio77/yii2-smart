@@ -13,10 +13,6 @@ class DkBaseHtml extends BaseHtml
 {
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
-		$view = Yii::$app->getView();
-		Select2Asset::register( $view );
-		$id = self::getInputId($model, $attribute);
-		$view->registerJs("$('#".$id."').select2();");
 		return static::activeListInput('dropDownList', $model, $attribute, $items, $options);
 	}
 	

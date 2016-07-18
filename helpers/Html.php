@@ -47,12 +47,7 @@ class Html extends DkBaseHtml
 	{
 		return self::tag('div', parent::activeTextarea($model, $attribute, $options), ['class' => 'textarea']);
 	}
-	
-	public static function activeSelect2($model, $attribute, $items = [], $options = [])
-	{
-		return self::tag('label', parent::activeSelect2($model, $attribute, $items, $options), ['class' => 'input']);
-	}
-		
+			
 	public static function radio($name, $checked = false, $options = [])
 	{
 		$options['checked'] = (bool) $checked;
@@ -128,4 +123,13 @@ class Html extends DkBaseHtml
 	{
 		return self::tag('label', parent::activeDateTimeInput($model, $attribute, $options), ['class' => 'input']);
 	}
+	
+	public static function activeSelect2($model, $attribute, $items = [], $options = [])
+	{
+		$view = Yii::$app->getView();
+		Select2Asset::register( $view );
+		$id = self::getInputId($model, $attribute);
+		$view->registerJs("$('#".$id."').select2();");
+		return parent::activeSelect2($model, $attribute, $items, $options);
+	}	
 }
