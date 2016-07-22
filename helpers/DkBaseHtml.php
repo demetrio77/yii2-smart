@@ -11,6 +11,11 @@ use yii\web\View;
 
 class DkBaseHtml extends BaseHtml
 {
+	public static function select2($name, $selection = null, $items = [], $options = [])
+	{
+		return static::dropDownList($name, $selection, $items, $options);
+	}
+	
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
 		return static::activeListInput('dropDownList', $model, $attribute, $items, $options);
@@ -44,7 +49,12 @@ class DkBaseHtml extends BaseHtml
 		DateTimePickerAsset::register( $view );
 			
 		$id = self::getInputId($model, $attribute);
-	
+		
+		$val = $model->{$attribute};
+		if (is_numeric($val)) {
+			$model->{$attribute} = date('d.m.Y H:i', $val);
+		}
+		
 		$view->registerJs("
             $('#".$id."').datetimepicker({
                locale: 'ru'

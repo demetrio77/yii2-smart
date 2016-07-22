@@ -124,6 +124,14 @@ class Html extends DkBaseHtml
 		return self::tag('label', parent::activeDateTimeInput($model, $attribute, $options), ['class' => 'input']);
 	}
 	
+	public static function select2($name, $selection = null, $items = [], $options = [])
+	{
+		$view = Yii::$app->getView();
+		Select2Asset::register( $view );
+		$view->registerJs("$('select[name=\"".$name."\"]').select2();");
+		return parent::select2($name, $selection, $items, $options);
+	}
+		
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
 		$view = Yii::$app->getView();
