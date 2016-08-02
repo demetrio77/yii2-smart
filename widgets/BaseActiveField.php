@@ -13,6 +13,7 @@ use demetrio77\smartadmin\assets\StarRatingAsset;
 use demetrio77\smartadmin\assets\FileUploaderAsset;
 use yii\helpers\Url;
 use yii\di\ServiceLocator;
+use demetrio77\manager\helpers\Alias;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
@@ -306,20 +307,20 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			'isImage' => false,
 			'filename' => false,
 			'tmpl' => 'upload,server,url,clear',
-			'callback' => false,
-			'prefixUrl'=>false
+			'callback' => false
 		];
-		 
+			
 		$options = ArrayHelper::merge($defaults, $options);
 		$id = Html::getInputId($this->model, $this->attribute);
-		 
+	
+		$url = $this->model->{$this->attribute};
+	
 		$js = "$(document).ready(function(){
     	    $('#".$id."').fileUploader({
                value	 : '".$this->model->{$this->attribute}."',
                tmpl:'".$options['tmpl']."',
                ".($options['callback']?"callback:".$options['callback'].',':'')."
                ".($options['returnPath'] ? "returnPath: true,":'')."
-               ".($options['prefixUrl'] ? "prefixUrl: '".$options['prefixUrl']."',":'')."
                ".($options['isImage'] ? "isImage: true,":'')."
                ".($options['filename'] ? "filename: '".$options['filename']."',":'')."
                connector: '".Url::toRoute(['//manager/connector'])."',
@@ -328,22 +329,21 @@ class BaseActiveField extends \yii\widgets\ActiveField
     	       folder: '".$options['folder']."'
     		});
     	});";
-		 
+			
 		foreach (array_keys($defaults) as $key) {
 			if (isset($options[$key])) unset($options[$key]);
 		}
-		 
+			
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
 		$this->parts['{input}'] = Html::activeHiddenInput($this->model, $this->attribute);
-		 
+			
 		$view = Yii::$app->getView();
 		FileUploaderAsset::register( $view );
 		$view->registerJs($js);
-		 
+			
 		return $this;
 	}
-	
 
 	public function imageInput($options = [])
 	{

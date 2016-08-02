@@ -18,7 +18,6 @@
 		filename: '',
 		isImage: false,
 		value: '',
-		url:'',
 		tmpl: 'upload,url,server,clear',
 		callback: false,
 		returnPath: false,
@@ -352,8 +351,19 @@
 					});
 		
 				//если не пусто, то нарисовать рисунок
-					if ($this.settings.value !='' ) {
-						$this.apply( {url: $this.settings.url, path: $this.settings.value} );
+					if ($this.settings.value !='') {
+						if ($this.settings.returnPath) {
+							$.ajax({
+							    async:true, dataType:'json',method:'POST',
+			                    url: $this.settings.connector + '?action=item&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.folder+'/'+$this.settings.value,
+		                        success:function(result){
+		                        	$this.apply( {url: result.url, path: $this.settings.value} )
+		                        }
+			                });
+						}
+						else {
+							$this.apply( {url: $this.settings.value, path: $this.settings.value} );
+						}
 					}
 					
 					globalObjects[$this.attr('id')] = {obj: $this};
