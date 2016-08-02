@@ -18,12 +18,12 @@
 		filename: '',
 		isImage: false,
 		value: '',
+		url:'',
 		tmpl: 'upload,url,server,clear',
 		callback: false,
 		returnPath: false,
 		connector:'',
-		browse:'',
-		prefixUrl:false
+		browse:''
 	};
 	
 	var globalObjects = {};
@@ -31,16 +31,24 @@
 	
 	var methods = {
 			
-		set: function(value){
-	       	$this = globalObjects[$(this).attr('id')].obj;
-	       	$this.apply({url: value, path:value});
-	    },	
+		set: function(result){
+			$this = globalObjects[$(this).attr('id')].obj;
+	       	$this.apply(result);
+	    },
+	    
+	    clear: function() {
+	    	$this = globalObjects[$(this).attr('id')].obj;
+	       	$this.apply({url: '', path:''});
+	    },
 			
 	    init: function (options) {
 	
 		    return this.each(function()
 			{
 				var $this = $(this);
+				if (options.filename=='time') {
+					options.filename = '{{time}}';
+				}
 				$this.settings = $.extend({}, defaults, options || {});
 				$this.id = $this.attr('id');
 				
@@ -172,11 +180,11 @@
 						$this.settings.value = value;
 						
 						if ($this.settings.isImage) {
-							var url = ($this.settings.prefixUrl?$this.settings.prefixUrl+'/':'')+value+'?'+Math.random();
-							$this.img.html( '<img src="'+url+'" width="120" />' );
+							var url = result.url ? result.url+'?'+Math.random() : '';
+							$this.img.html( url ? '<img src="'+url+'" width="120" />' : '');
 						}
 						else {
-							$this.img.html( '<span class="fa fa-lg fa-fw fa-file-o"></span>'+value);
+							$this.img.html( value ? '<span class="fa fa-lg fa-fw fa-file-o"></span>'+value : '') ;
 						}
 					
 						$this.urlHide();
@@ -199,10 +207,17 @@
 						}
 					};			
 				//появление прогресс бара
-					$this.progressShow = function() { $this.progress.css('display', 'block'); };
+					$this.progressShow = function() { 
+						$this.progress.css('display', 'block'); 
+						$this.progressBar.css('width', '0%');
+						$this.progressUploaded.text('0%');
+					};
 				//скрытие прогресс бара
-					$this.progressHide = function() { $this.progress.css('display', 'none'); };
-					
+					$this.progressHide = function() { 
+						$this.progress.css('display', 'none'); 
+						$this.progressBar.css('width', '0%');
+						$this.progressUploaded.text('0%');
+					};					
 				//ДЕЙСТВИЯ КНОПОК
 				//с диска
 					$('input[name="' + $this.settings.name + '"]').click( function() {
@@ -338,7 +353,7 @@
 		
 				//если не пусто, то нарисовать рисунок
 					if ($this.settings.value !='' ) {
-						$this.apply( {url: $this.settings.value, path: $this.settings.value} );
+						$this.apply( {url: $this.settings.url, path: $this.settings.value} );
 					}
 					
 					globalObjects[$this.attr('id')] = {obj: $this};
