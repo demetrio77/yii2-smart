@@ -12,9 +12,22 @@ use demetrio77\smartadmin\assets\SpriteInputAsset;
 use demetrio77\smartadmin\assets\StarRatingAsset;
 use demetrio77\smartadmin\assets\FileUploaderAsset;
 use yii\helpers\Url;
+use yii\di\ServiceLocator;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
+	public $labelCols = 3;
+	public $inputCols = 9;
+	
+	public function init()
+	{
+		parent::init();
+		
+		if ( property_exists($this->form, 'layout') && $this->form->layout == ActiveForm::LAYOUT_HORIZONTAL && $this->template=="{label}\n{input}\n{hint}\n{error}") {
+			$this->template = str_replace(['{labelCols}','{inputCols}'], [$this->labelCols,$this->inputCols], $this->form->horizontalFieldTemplate);
+		}
+	}
+	
 	public function strongPassword($options = [])
 	{
 		$length = 8;
@@ -140,7 +153,6 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-		$this->model->{$this->attribute} = date('d.m.Y H:i', $this->model->{$this->attribute});
 		$this->parts['{input}'] = '<div class="input-group">'.Html::activeDateTimeInput($this->model, $this->attribute, $options).'<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div>';
 		return $this;
 	}

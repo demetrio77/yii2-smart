@@ -57,22 +57,22 @@ class Ru extends Object
 			if ($num>=1000000) {
 				$m = floor($num/1000000);
 				$ost = $num % 1000000;
-				return trim(self::$numberToString($m).' '.self::padeg($m, $mil).' '.self::$numberToString($ost));
+				return trim(self::numberToString($m).' '.self::padeg($m, $mil).' '.self::numberToString($ost));
 			}
 			elseif ($num>=1000) {
 				$m = floor($num/1000);
 				$ost = $num % 1000;
-				return trim(self::$numberToString($m, true).' '.self::padeg($m, $tys).' '.self::$numberToString($ost));
+				return trim(self::numberToString($m, true).' '.self::padeg($m, $tys).' '.self::numberToString($ost));
 			}
 			elseif ($num>=100) {
 				$s = floor($num/100);
 				$ost = $num %100;
-				return trim((isset($sot[$s])?$sot[$s]:'').' '.self::$numberToString($ost, $zhen));
+				return trim((isset($sot[$s])?$sot[$s]:'').' '.self::numberToString($ost, $zhen));
 			}
 			elseif ($num>19) {
 				$s = floor($num/10);
 				$ost = $num % 10;
-				return trim((isset($des[$s])?$des[$s]:'').' '.self::$numberToString($ost, $zhen));
+				return trim((isset($des[$s])?$des[$s]:'').' '.self::numberToString($ost, $zhen));
 			}
 			elseif ($num>=10) {
 				return trim($des2[$num]);

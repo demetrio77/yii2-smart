@@ -119,11 +119,16 @@ class DateHelper
 	
 	public static function toUnix($date)
 	{
-		if (preg_match('/\d\d\d\d-\d\d-\d\d/', $date)) {
+		if (preg_match('/$\d\d\d\d-\d\d-\d\d^/', $date)) {
 			return self::mysqlToUnix($date);
 		}
-		if (preg_match('/\d\d\.\d\d\.\d\d\d\d/', $date)) {
+		if (preg_match('/$\d\d\.\d\d\.\d\d\d\d^/', $date)) {
 			return self::ruToUnix($date);
+		}
+		if (preg_match_all('/(\d\d)\.(\d\d)\.(\d\d\d\d) (\d\d):(\d\d)/', $date, $matches)) {
+			if (count($matches)==6) {
+				return mktime(intval($matches[4][0]),intval($matches[5][0]),0,intval($matches[2][0]),intval($matches[1][0]),intval($matches[3][0]) );
+			}
 		}
 		if (preg_match('/\d+/', $date)) {
 			return $date;

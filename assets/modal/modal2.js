@@ -136,8 +136,8 @@ function dkmodal( options )
 						$(b).css('display','none');
 					}
 					$(b).click(function(){
-						$('.errorMessage', $this).hide();
-						$('.errorSummary', $this).hide();
+						$('.errorMessage', self.body).hide();
+						$('.errorSummary', self.body).hide();
 						if (button.beforeSave()) {
 							var btn = $(this);
 							if (button.loading!==false) {
