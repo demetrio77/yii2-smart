@@ -133,7 +133,7 @@ class DateHelper
 		if (preg_match('/\d+/', $date)) {
 			return $date;
 		}
-		return false;
+		return 0;
 	}
 	
 	public static function dayLimitsUnix($date1, $date2 = 0)

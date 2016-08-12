@@ -52,7 +52,12 @@ class DkBaseHtml extends BaseHtml
 		
 		$val = $model->{$attribute};
 		if (is_numeric($val)) {
-			$model->{$attribute} = date('d.m.Y H:i', $val);
+			if ($val>0) {
+				$model->{$attribute} = date('d.m.Y H:i', $val);
+			}
+			else {
+				$model->{$attribute} = '';
+			}
 		}
 		
 		$view->registerJs("

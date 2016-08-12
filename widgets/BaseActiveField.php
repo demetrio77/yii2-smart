@@ -352,31 +352,36 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	}
 	
 	
-	/*public function dropDownMultiple( $items = [], $options = [], $tags = false)
-	 {
-	$style = 'padding:0; border:0;';
-	if (!isset($options['style']))
-		$options['style'] = $style;
-	else
-		$options['style'] .= $style;
-	$options = array_merge($this->inputOptions, $options);
-	$this->adjustLabelFor($options);
-	if ($tags) {
-	$view = Yii::$app->getView();
-	\backend\assets\Select2Asset::register( $view );
-	$id = Html::getInputId($this->model, $this->attribute);
-	$js = "
-	$('#".$id."').select2({
-			tags:['".implode("','", $items)."'],
-			tokenSeparators: [',']
-			});
-	";
-	$this->parts['{input}'] = Html::activeTextInput($this->model, $this->attribute, $options);
-	$view->registerJs($js);
-	} else {
-	$options['multiple'] = true;
-	$this->parts['{input}'] = Html::activeSelect2($this->model, $this->attribute, $items, $options);
+	public function dropDownMultiple( $items = [], $options = [], $tags = false)
+	{
+		$style = 'padding:0; border:0;';
+		if (!isset($options['style']))
+			$options['style'] = $style;
+		else
+			$options['style'] .= $style;
+	
+		$options = array_merge($this->inputOptions, $options);
+		$this->adjustLabelFor($options);
+	
+		if ($tags) {
+			$view = Yii::$app->getView();
+			\demetrio77\smartadmin\assets\Select2Asset::register( $view );
+			$id = Html::getInputId($this->model, $this->attribute);
+		
+			$js = "$('#".$id."').select2({
+				tags:['".implode("','", $items)."'],
+				tokenSeparators: [',']
+			});";
+			
+			$this->parts['{input}'] = Html::activeTextInput($this->model, $this->attribute, $options);
+			
+			$view->registerJs($js);
+		} 
+		else {
+			$options['multiple'] = true;
+			$this->parts['{input}'] = Html::activeSelect2($this->model, $this->attribute, $items, $options);
+		}
+		
+		return $this;
 	}
-	return $this;
-	}*/
 }
