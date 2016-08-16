@@ -88,7 +88,7 @@ class DateHelper
 	
 	public static function unixDate($u) 
 	{
-		return date('j',$u).' '.self::month(date('n',$u)).' '.date('Y',$u);
+		return date('j',$u).' '.self::month(date('n',$u), true).' '.date('Y',$u);
 	}
 	
 	public static function unixShortDate($u) 
