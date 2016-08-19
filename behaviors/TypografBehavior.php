@@ -12,6 +12,23 @@ class TypografBehavior extends Behavior
     public $attributes = [];
     public $removeScenarios = ['update'];
     
+    public function init()
+    {
+    	parent::init();
+    	if (empty($this->attributes)) {
+    		$this->attributes = [];
+    	}
+    	if (empty($this->removeScenarios)) {
+    		$this->removeScenarios = [];
+    	}
+    	if (!is_array($this->attributes)) {
+    		$this->attributes = [ $this->attributes ];
+    	}
+    	if (!is_array($this->removeScenarios)) {
+    		$this->removeScenarios = [ $this->removeScenarios ];
+    	}
+    }
+    
     public function events()
     {
     	return [
@@ -25,14 +42,7 @@ class TypografBehavior extends Behavior
     {
     	$model = $this->owner;
         foreach ($this->attributes as $attribute) {
-        	$model->{$attribute} = Typograph::fast_apply($model->{$attribute}, [	
-				'Text.paragraphs' => 'off',
-				'Text.breakline'=>'off',
-				'OptAlign.oa_oquote' => 'off',
-				'OptAlign.oa_obracket_coma' => 'off',
-				'Quote.quotation'=>'off',
-				'Text.auto_links'=>'off']
-			);
+        	$model->{$attribute} = Typograph::process($model->{$attribute});
    	 	}    	
 	}
 	
@@ -42,7 +52,7 @@ class TypografBehavior extends Behavior
 		if (in_array($model->scenario, $this->removeScenarios))
 		{
 			foreach ($this->attributes as $attribute) {
-				$model->{$attribute} = htmlspecialchars_decode($model->{$attribute});
+				$model->{$attribute} = html_entity_decode($model->{$attribute});
 			}
 		}
 	}

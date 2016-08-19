@@ -222,6 +222,18 @@ class Typograph extends EMT_Base
 		$obj->set_text($text);
 		return $obj->apply();
 	}
+
+ 	public static function process( $text )
+	{
+		return self::fast_apply($text, [
+			'Text.paragraphs' => 'off',
+			'Text.breakline'=>'off',
+			'OptAlign.oa_oquote' => 'off',
+			'OptAlign.oa_obracket_coma' => 'off',
+			'Quote.quotation'=>'off',
+			'Text.auto_links'=>'off']
+		);
+	}
 }
 
 
