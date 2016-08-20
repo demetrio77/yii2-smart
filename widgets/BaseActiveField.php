@@ -384,4 +384,10 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		
 		return $this;
 	}
+	
+	public function dateDropDown( $options = [])
+	{
+		$this->parts['{input}'] = Html::activeDateDropDown($this->model, $this->attribute, $options);
+		return $this;
+	}
 }
