@@ -10,7 +10,7 @@ use demetrio77\smartadmin\helpers\typograph\Typograph;
 class TypografBehavior extends Behavior
 {
     public $attributes = [];
-    public $removeScenarios = ['update'];
+    private static $fields = [];
     
     public function init()
     {
@@ -18,27 +18,20 @@ class TypografBehavior extends Behavior
     	if (empty($this->attributes)) {
     		$this->attributes = [];
     	}
-    	if (empty($this->removeScenarios)) {
-    		$this->removeScenarios = [];
-    	}
     	if (!is_array($this->attributes)) {
     		$this->attributes = [ $this->attributes ];
-    	}
-    	if (!is_array($this->removeScenarios)) {
-    		$this->removeScenarios = [ $this->removeScenarios ];
     	}
     }
     
     public function events()
     {
     	return [
-    	   ActiveRecord::EVENT_BEFORE_INSERT => 'typo',
-    	   ActiveRecord::EVENT_BEFORE_UPDATE => 'typo',
-    	   ActiveRecord::EVENT_AFTER_FIND => 'remove'
+    	   ActiveRecord::EVENT_BEFORE_INSERT => 'addTypo',
+    	   ActiveRecord::EVENT_BEFORE_UPDATE => 'addTypo'
     	];
     }
     
-    public function typo( $event )
+    public function addTypo( $event = [] )
     {
     	$model = $this->owner;
         foreach ($this->attributes as $attribute) {
@@ -46,14 +39,21 @@ class TypografBehavior extends Behavior
    	 	}    	
 	}
 	
-	public function remove( $event )
+	public function removeTypo($fields=[], $except=[])
 	{
+		if ($fields && !is_array($fields)) {
+			$fields = [$fields];
+		}
+		if ($except && !is_array($except)) {
+			$except = [$except];
+		}
+		
 		$model = $this->owner;
-		if (in_array($model->scenario, $this->removeScenarios))
-		{
-			foreach ($this->attributes as $attribute) {
+		foreach ($fields ? $fields : $this->attributes as $attribute) {
+			if (!in_array($attribute, $except)) {
 				$model->{$attribute} = html_entity_decode($model->{$attribute});
 			}
 		}
+		return $model;
 	}
 }

@@ -203,6 +203,10 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			unset( $options['hints']);
 			$showHints = true;
 		}
+		
+		foreach ($items as $key => $value) {
+			$items[$key] = html_entity_decode($value);
+		}
 		 
 		$view = Yii::$app->getView();
 		\demetrio77\smartadmin\assets\Select2Asset::register( $view );

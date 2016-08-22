@@ -18,6 +18,9 @@ class DkBaseHtml extends BaseHtml
 	
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
+		foreach ($items as $key => $value) {
+			$items[$key] = html_entity_decode($value);
+		}
 		return static::activeListInput('dropDownList', $model, $attribute, $items, $options);
 	}
 	
