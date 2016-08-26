@@ -47,12 +47,8 @@ class UserIdBehavior extends AttributeBehavior
      */
     protected function getValue($event)
     {
-    	if (!isset(Yii::$app->{$this->userComponent})) {
-    		return 0;
-    	}
-    	
-        if ($this->value === null) {
-            return Yii::$app->{$this->userComponent}->id;
+    	if ($this->value === null) {
+    		return isset(Yii::$app->{$this->userComponent}->id) ? Yii::$app->{$this->userComponent}->id : 0;
         }
         return parent::getValue($event);
     }
