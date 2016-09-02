@@ -355,7 +355,7 @@
 						if ($this.settings.returnPath) {
 							$.ajax({
 							    async:true, dataType:'json',method:'POST',
-			                    url: $this.settings.connector + '?action=item&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.folder+'/'+$this.settings.value,
+			                    url: $this.settings.connector + '?action=item&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.value,
 		                        success:function(result){
 		                        	$this.apply( {url: result.url, path: $this.settings.value} )
 		                        }
