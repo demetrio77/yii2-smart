@@ -87,3 +87,23 @@ media="screen"
 .colorpicker { 
   z-index: 1051;
 }
+TH .desc:before, TH .asc:before  {
+  display: inline;
+  padding-right:3px;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f0d7";
+  text-decoration: none;
+}
+TH .asc:before  {
+	content: "\f0d8";
+}
+TH .desc:before:hover, TH .asc:before:hover {
+	text-decoration: none;
+}
+TH A:hover {
+	text-decoration: none;
+}
