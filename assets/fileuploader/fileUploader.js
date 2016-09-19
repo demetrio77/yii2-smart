@@ -170,10 +170,6 @@
 				//публикация рисунка
 					$this.apply = function ( result ) 
 					{
-						if ($this.settings.callback!==false) {
-							$this.settings.callback( result );
-						}
-						
 						var value = $this.settings.returnPath ? result.path : result.url;
 						$this.val(value);
 						$this.settings.value = value;
@@ -185,7 +181,11 @@
 						else {
 							$this.img.html( value ? '<span class="fa fa-lg fa-fw fa-file-o"></span>'+value : '') ;
 						}
-					
+						
+						if ($this.settings.callback!==false) {
+							$this.settings.callback( result );
+						}
+						
 						$this.urlHide();
 						$this.uploadHide();
 					};

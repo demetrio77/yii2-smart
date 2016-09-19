@@ -107,3 +107,6 @@ TH .desc:before:hover, TH .asc:before:hover {
 TH A:hover {
 	text-decoration: none;
 }
+.cursor-pointer {
+	cursor:pointer;
+}

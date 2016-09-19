@@ -145,7 +145,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
 		 
-		$this->parts['{input}'] = '<div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).'<span class="input-group-addon"><i class="fa fa-calendar"></i></span></div>';
+		$this->parts['{input}'] = '<div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).'<span title="Cегодня" class="input-group-addon cursor-pointer"><i class="fa fa-calendar"></i></span></div>';
 		 
 		return $this;
 	}
@@ -154,7 +154,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-		$this->parts['{input}'] = '<div class="input-group">'.Html::activeDateTimeInput($this->model, $this->attribute, $options).'<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div>';
+		$this->parts['{input}'] = '<div class="input-group">'.Html::activeDateTimeInput($this->model, $this->attribute, $options).'<span title="Сейчас" class="input-group-addon cursor-pointer"><i class="glyphicon glyphicon-time"></i></span></div>';
 		return $this;
 	}
 	

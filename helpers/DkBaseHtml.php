@@ -67,6 +67,17 @@ class DkBaseHtml extends BaseHtml
             $('#".$id."').datetimepicker({
                locale: 'ru'
             });
+			$('.cursor-pointer', $('#".$id."').parent().parent()).click( function(){
+				var d = new Date,
+    			dformat = [ d.getDate(),
+							d.getMonth()+1,
+               				d.getFullYear()].join('.')+' '+
+              			  [ d.getHours(),
+               				d.getMinutes(),
+               			  ].join(':');
+				
+				$('#".$id."').data(\"DateTimePicker\").date(dformat);
+			});
     	", View::POS_READY);
 	
 		$options['class'] = 'form-control'.(isset($options['class'])?' '.$options['class']:'');
