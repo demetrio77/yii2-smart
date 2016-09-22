@@ -267,7 +267,10 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		$view = Yii::$app->getView();
 		StarRatingAsset::register( $view );
-	
+		$id = Html::getInputId($this->model, $this->attribute);
+		
+		$view->registerJs("$ ('#".$id."').rating();");
+		
 		$this->inputOptions['class'] .= ' rating';
 		if (!isset($options['min'])) {
 			$options['min'] = 0;
