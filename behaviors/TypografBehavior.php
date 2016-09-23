@@ -51,7 +51,7 @@ class TypografBehavior extends Behavior
 		$model = $this->owner;
 		foreach ($fields ? $fields : $this->attributes as $attribute) {
 			if (!in_array($attribute, $except)) {
-				$model->{$attribute} = html_entity_decode($model->{$attribute});
+				$model->{$attribute} = Typograph::remove($model->{$attribute});
 			}
 		}
 		return $model;

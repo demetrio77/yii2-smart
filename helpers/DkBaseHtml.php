@@ -8,6 +8,7 @@ use demetrio77\smartadmin\assets\Select2Asset;
 use demetrio77\smartadmin\assets\DateDropDownAsset;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
 use yii\web\View;
+use demetrio77\smartadmin\helpers\typograph\Typograph;
 
 class DkBaseHtml extends BaseHtml
 {
@@ -19,7 +20,7 @@ class DkBaseHtml extends BaseHtml
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
 		foreach ($items as $key => $value) {
-			$items[$key] = html_entity_decode($value);
+			$items[$key] = Typograph::remove($value);
 		}
 		return static::activeListInput('dropDownList', $model, $attribute, $items, $options);
 	}

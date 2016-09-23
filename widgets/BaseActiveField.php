@@ -14,6 +14,7 @@ use demetrio77\smartadmin\assets\FileUploaderAsset;
 use yii\helpers\Url;
 use yii\di\ServiceLocator;
 use demetrio77\manager\helpers\Alias;
+use demetrio77\smartadmin\helpers\typograph\Typograph;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
@@ -205,7 +206,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		}
 		
 		foreach ($items as $key => $value) {
-			$items[$key] = html_entity_decode($value);
+			$items[$key] = Typograph::remove($value);
 		}
 		 
 		$view = Yii::$app->getView();

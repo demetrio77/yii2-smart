@@ -312,7 +312,7 @@
 					$this.content.fileapi({
 						url: $this.settings.connector + '?action=upload&options[force]=1&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.folder,
 						multiple: false,
-						maxSize: 20 * FileAPI.MB,
+						maxSize: 100 * FileAPI.MB,
 						autoUpload: $this.settings.filename!='',
 					    data: { '_csrf' : csrfToken },
 						elements: {
