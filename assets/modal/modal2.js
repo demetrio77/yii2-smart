@@ -244,7 +244,8 @@ function dkmodal( options )
 			$.extend(settings, options);
 		}
 		
-		this.body.html(settings.html);
+		self.body.html(settings.html);
+		self.title.text(settings.title);
 		self.buttons = new buttons(settings.buttons);
 		settings.afterLoad();
 		self.onClose = function() { settings.onClose()};
