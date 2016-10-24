@@ -77,6 +77,8 @@
 					$this.menu = $('.image-uploader-menu', $this.content);
 				
 				//панель загрузки файла
+					$this.uploadStart = "upload-start-"+ Math.ceil(Math.random()*100000000);
+					
 					$this.content.append('<div class="image-uploader-upload-panel" style="display:none;margin-top:5px;">\
 				      <section>\
 		                 <label class="label">Имя файла</label>\
@@ -86,7 +88,7 @@
 					     </div>\
 		               </section>\
 		               <section>\
-		                    <button type="button" id="upload-start" class="btn btn-primary">Скопировать</button>\
+		                    <button type="button" id="' + $this.uploadStart + '" class="btn btn-primary">Скопировать</button>\
 		            		<button type="button" class="upload-close btn btn-danger">Cкрыть</button>\
 		               </section>\
 					</div>');
@@ -316,7 +318,7 @@
 						autoUpload: $this.settings.filename!='',
 					    data: { '_csrf' : csrfToken },
 						elements: {
-							ctrl: { upload: '#upload-start'},
+							ctrl: { upload: '#' + $this.uploadStart },
 							size: $this.progressSize,
 							active:  { 
 								show: $this.progress 
