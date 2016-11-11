@@ -15,6 +15,7 @@ use yii\helpers\Url;
 use yii\di\ServiceLocator;
 use demetrio77\manager\helpers\Alias;
 use demetrio77\smartadmin\helpers\typograph\Typograph;
+use demetrio77\smartadmin\assets\ClockPickerAsset;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
@@ -136,10 +137,30 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		return $this->textInput( $options );
 	}
 	
-	public function dateInput( $options = [])
+	public function clockInput( $options = [] )
 	{
 		$view = Yii::$app->getView();
+		ClockPickerAsset::register( $view );
+		
+		$id = Html::getInputId($this->model, $this->attribute);
+		
+		$view->registerJs("
+            $('#".$id."').clockpicker({
+				placement: 'top',
+			    donetext: 'Готово'
+			});",
+			View::POS_READY
+		);
+		
+		$options = array_merge($this->inputOptions, $options);
+		$this->adjustLabelFor($options);
+		
+		$this->parts['{input}'] = '<div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).'<span class="input-group-addon"><i class="fa fa-clock-o"></i></span></div>';
+		return $this;
+	}
 	
+	public function dateInput( $options = [])
+	{
 		$this->inputOptions['class'] .= ' datepicker';
 		$options['data-dateformat'] = "yy-mm-dd";
 	

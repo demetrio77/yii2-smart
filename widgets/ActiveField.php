@@ -52,6 +52,13 @@ class ActiveField extends BaseActiveField
     	return $this;
     }
     
+    public function clockInput( $options = [])
+    {
+    	parent::clockInput($options);
+    	$this->parts['{input}'] = '<div class="input">'.$this->parts['{input}'].'</div>';		
+    	return $this;
+    }
+    
     public function dateTimeInput( $options = [])
     {
     	parent::dateTimeInput($options);

@@ -39,6 +39,11 @@
 	    	$this = globalObjects[$(this).attr('id')].obj;
 	       	$this.apply({url: '', path:''});
 	    },
+	    
+	    option: function(setting, value) {
+	    	$this = globalObjects[$(this).attr('id')].obj;
+	    	$this.settings[setting] = value;
+	    },
 			
 	    init: function (options) {
 	

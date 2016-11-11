@@ -130,6 +130,11 @@ class DateHelper
 				return mktime(intval($matches[4][0]),intval($matches[5][0]),0,intval($matches[2][0]),intval($matches[1][0]),intval($matches[3][0]) );
 			}
 		}
+		if (preg_match_all('/(\d\d):(\d\d)/', $date, $matches)) {
+			if (count($matches)==3) {
+				return intval($matches[1][0])*3600 + intval($matches[2][0]) *60;
+			}
+		}
 		if (preg_match('/\d+/', $date)) {
 			return $date;
 		}
