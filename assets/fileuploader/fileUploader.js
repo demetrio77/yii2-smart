@@ -37,7 +37,7 @@
 	    
 	    clear: function() {
 	    	$this = globalObjects[$(this).attr('id')].obj;
-	       	$this.apply({url: '', path:''});
+	       	$this.apply({url: '', path:''}, false);
 	    },
 	    
 	    option: function(setting, value) {
@@ -175,8 +175,9 @@
 					$this.uploadHide = function() { $this.upload.slideUp (300); };
 				
 				//публикация рисунка
-					$this.apply = function ( result ) 
+					$this.apply = function ( result, withCallback ) 
 					{
+						if (withCallback == undefined ) withCallback = true;
 						var value = $this.settings.returnPath ? result.path : result.url;
 						$this.val(value);
 						$this.settings.value = value;
@@ -189,7 +190,7 @@
 							$this.img.html( value ? '<span class="fa fa-lg fa-fw fa-file-o"></span>'+value : '') ;
 						}
 						
-						if ($this.settings.callback!==false) {
+						if (withCallback && $this.settings.callback!==false) {
 							$this.settings.callback( result );
 						}
 						
