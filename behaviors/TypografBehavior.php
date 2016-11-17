@@ -10,6 +10,7 @@ use demetrio77\smartadmin\helpers\typograph\Typograph;
 class TypografBehavior extends Behavior
 {
     public $attributes = [];
+    public $html = [];
     private static $fields = [];
     
     public function init()
@@ -21,13 +22,18 @@ class TypografBehavior extends Behavior
     	if (!is_array($this->attributes)) {
     		$this->attributes = [ $this->attributes ];
     	}
+    	if (empty($this->html)) {
+    		$this->html = [];
+    	}
+    	if (!is_array($this->html)) {
+    		$this->html = [ $this->html ];
+    	}
     }
     
     public function events()
     {
     	return [
-    	   ActiveRecord::EVENT_BEFORE_INSERT => 'addTypo',
-    	   ActiveRecord::EVENT_BEFORE_UPDATE => 'addTypo'
+    	   ActiveRecord::EVENT_BEFORE_VALIDATE => 'addTypo'
     	];
     }
     
@@ -35,8 +41,11 @@ class TypografBehavior extends Behavior
     {
     	$model = $this->owner;
         foreach ($this->attributes as $attribute) {
-        	$model->{$attribute} = Typograph::process($model->{$attribute});
-   	 	}    	
+        	$model->{$attribute} = Typograph::process( htmlspecialchars( $model->{$attribute} ));
+   	 	}
+   	 	foreach ($this->html as $attribute) {
+   	 		$model->{$attribute} = Typograph::process( $model->{$attribute} );
+   	 	}
 	}
 	
 	public function removeTypo($fields=[], $except=[])
@@ -51,7 +60,7 @@ class TypografBehavior extends Behavior
 		$model = $this->owner;
 		foreach ($fields ? $fields : $this->attributes as $attribute) {
 			if (!in_array($attribute, $except)) {
-				$model->{$attribute} = html_entity_decode($model->{$attribute});
+				$model->{$attribute} = Typograph::remove($model->{$attribute});
 			}
 		}
 		return $model;

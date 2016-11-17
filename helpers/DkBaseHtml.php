@@ -8,6 +8,7 @@ use demetrio77\smartadmin\assets\Select2Asset;
 use demetrio77\smartadmin\assets\DateDropDownAsset;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
 use yii\web\View;
+use demetrio77\smartadmin\helpers\typograph\Typograph;
 
 class DkBaseHtml extends BaseHtml
 {
@@ -19,7 +20,7 @@ class DkBaseHtml extends BaseHtml
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
 		foreach ($items as $key => $value) {
-			$items[$key] = html_entity_decode($value);
+			$items[$key] = Typograph::remove($value);
 		}
 		return static::activeListInput('dropDownList', $model, $attribute, $items, $options);
 	}
@@ -67,10 +68,29 @@ class DkBaseHtml extends BaseHtml
             $('#".$id."').datetimepicker({
                locale: 'ru'
             });
+			$('.cursor-pointer', $('#".$id."').parent().parent()).click( function(){
+				var d = new Date,
+    			dformat = [ d.getDate(),
+							d.getMonth()+1,
+               				d.getFullYear()].join('.')+' '+
+              			  [ d.getHours(),
+               				d.getMinutes(),
+               			  ].join(':');
+				
+				$('#".$id."').data(\"DateTimePicker\").date(dformat);
+			});
     	", View::POS_READY);
 	
 		$options['class'] = 'form-control'.(isset($options['class'])?' '.$options['class']:'');
 	
 		return self::activeTextInput($model, $attribute, $options);
+	}
+	
+	public static function activeDateInput( $model, $attribute, $options = [])
+	{
+		$options['data-dateformat'] = "yy-mm-dd";
+		$options['class'] = 'form-control datepicker'.(isset($options['class'])?' '.$options['class']:'');
+			
+		return '<div class="input-group">'.self::activeTextInput($model, $attribute, $options).'<span title="Cегодня" class="input-group-addon cursor-pointer"><i class="fa fa-calendar"></i></span></div>';
 	}
 }

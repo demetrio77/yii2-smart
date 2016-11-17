@@ -37,7 +37,12 @@
 	    
 	    clear: function() {
 	    	$this = globalObjects[$(this).attr('id')].obj;
-	       	$this.apply({url: '', path:''});
+	       	$this.apply({url: '', path:''}, false);
+	    },
+	    
+	    option: function(setting, value) {
+	    	$this = globalObjects[$(this).attr('id')].obj;
+	    	$this.settings[setting] = value;
 	    },
 			
 	    init: function (options) {
@@ -77,6 +82,8 @@
 					$this.menu = $('.image-uploader-menu', $this.content);
 				
 				//панель загрузки файла
+					$this.uploadStart = "upload-start-"+ Math.ceil(Math.random()*100000000);
+					
 					$this.content.append('<div class="image-uploader-upload-panel" style="display:none;margin-top:5px;">\
 				      <section>\
 		                 <label class="label">Имя файла</label>\
@@ -86,7 +93,7 @@
 					     </div>\
 		               </section>\
 		               <section>\
-		                    <button type="button" id="upload-start" class="btn btn-primary">Скопировать</button>\
+		                    <button type="button" id="' + $this.uploadStart + '" class="btn btn-primary">Скопировать</button>\
 		            		<button type="button" class="upload-close btn btn-danger">Cкрыть</button>\
 		               </section>\
 					</div>');
@@ -168,12 +175,9 @@
 					$this.uploadHide = function() { $this.upload.slideUp (300); };
 				
 				//публикация рисунка
-					$this.apply = function ( result ) 
+					$this.apply = function ( result, withCallback ) 
 					{
-						if ($this.settings.callback!==false) {
-							$this.settings.callback( result );
-						}
-						
+						if (withCallback == undefined ) withCallback = true;
 						var value = $this.settings.returnPath ? result.path : result.url;
 						$this.val(value);
 						$this.settings.value = value;
@@ -185,7 +189,11 @@
 						else {
 							$this.img.html( value ? '<span class="fa fa-lg fa-fw fa-file-o"></span>'+value : '') ;
 						}
-					
+						
+						if (withCallback && $this.settings.callback!==false) {
+							$this.settings.callback( result );
+						}
+						
 						$this.urlHide();
 						$this.uploadHide();
 					};
@@ -263,7 +271,8 @@
 		    	           $this.urlHide();
 		    	           $this.progressShow();
 		    	           
-		    	           var filename = $this.settings.filename ? $this.settings.filename : ($this.linkName.val().trim() + ($this.linkExt.text().trim()!='' ? "." + $this.linkExt.text().trim() : ''));
+		    	           var filename = $this.settings.filename ? $this.settings.filename : $this.linkName.val().trim();
+		    	           var ext = $this.linkExt.text().trim();
 		    	           var tmp = Math.floor(Math.random() * 998999)+1000;
 		    	           var interval = setInterval(function()
 		                   {
@@ -281,7 +290,7 @@
 		                   }, 100);
 		                   
 		                   $.ajax({
-		                       data: {link:link,filename:filename,_csrf: csrfToken},
+		                       data: {link:link,filename:filename,ext:ext,_csrf: csrfToken},
 		                       async:true, dataType:'json',method:'POST',
 		                       url: $this.settings.connector + '?action=link&options[force]=1&options[tmp]='+tmp+'&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.folder,
 		                       success:function(result){
@@ -311,11 +320,11 @@
 					$this.content.fileapi({
 						url: $this.settings.connector + '?action=upload&options[force]=1&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.folder,
 						multiple: false,
-						maxSize: 20 * FileAPI.MB,
+						maxSize: 100 * FileAPI.MB,
 						autoUpload: $this.settings.filename!='',
 					    data: { '_csrf' : csrfToken },
 						elements: {
-							ctrl: { upload: '#upload-start'},
+							ctrl: { upload: '#' + $this.uploadStart },
 							size: $this.progressSize,
 							active:  { 
 								show: $this.progress 
@@ -334,7 +343,8 @@
 					        }
 					    },
 					    onBeforeUpload: function (evt, uiEvt) {
-					    	uiEvt.widget.options.data.filename = $this.settings.filename ? $this.settings.filename : ($this.fileName.val().trim() + ($this.fileExt.text().trim()!='' ? "." + $this.fileExt.text().trim() : ''));
+					    	uiEvt.widget.options.data.filename = $this.settings.filename ? $this.settings.filename : $this.fileName.val().trim();
+					    	uiEvt.widget.options.data.ext = $this.fileExt.text().trim(); 
 					    },
 					    onSelect: function (evt, ui){
 					    	if ($this.settings.filename) return ;
@@ -357,7 +367,9 @@
 							    async:true, dataType:'json',method:'POST',
 			                    url: $this.settings.connector + '?action=item&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.value,
 		                        success:function(result){
-		                        	$this.apply( {url: result.url, path: $this.settings.value} )
+		                        	if (result.url) {
+		                        		$this.apply( {url: result.url, path: $this.settings.value} )
+		                        	}
 		                        }
 			                });
 						}
