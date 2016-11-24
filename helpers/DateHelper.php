@@ -36,7 +36,7 @@ class DateHelper
 				return
 				((intval($d[2]) && intval($d[2])<=31)?intval($d[2]).$separator:'').
 				self::month($d[1], true, $options).
-				(intval($d[0])?$separator.intval($d[0]):'');
+				((!isset($options['noyear']) && intval($d[0]))?$separator.intval($d[0]):'');
 		}
 		return false;
 	}
