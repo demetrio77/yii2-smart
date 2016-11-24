@@ -78,13 +78,6 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$defaultEmptyValue = '';
 		$where = [];
 		$autoComplete = false;
-	
-		$style = 'padding:0; border:0;';
-		if (!isset($options['style']))
-			$options['style'] = $style;
-		else
-			$options['style'] .= $style;
-		 
 		$options = array_merge($this->inputOptions, $options);
 	
 		foreach ($params as $property => $value) {
