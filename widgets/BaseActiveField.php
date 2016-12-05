@@ -139,8 +139,8 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		
 		$view->registerJs("
             $('#".$id."').clockpicker({
-				placement: 'top',
-			    donetext: 'Готово'
+				autoclose: true,
+				placement: 'top'
 			});",
 			View::POS_READY
 		);
@@ -169,7 +169,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-		$this->parts['{input}'] = '<div class="input-group">'.Html::activeDateTimeInput($this->model, $this->attribute, $options).'<span title="Сейчас" class="input-group-addon cursor-pointer"><i class="glyphicon glyphicon-time"></i></span></div>';
+		$this->parts['{input}'] = Html::activeDateTimeInput($this->model, $this->attribute, $options);
 		return $this;
 	}
 	

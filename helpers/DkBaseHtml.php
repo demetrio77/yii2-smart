@@ -9,6 +9,8 @@ use demetrio77\smartadmin\assets\DateDropDownAsset;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
 use yii\web\View;
 use demetrio77\smartadmin\helpers\typograph\Typograph;
+use demetrio77\smartadmin\assets\DatePickerAsset;
+use demetrio77\smartadmin\assets\ClockPickerAsset;
 
 class DkBaseHtml extends BaseHtml
 {
@@ -50,10 +52,7 @@ class DkBaseHtml extends BaseHtml
 	public static function activeDateTimeInput($model, $attribute, $options = [])
 	{
 		$view = Yii::$app->getView();
-		DateTimePickerAsset::register( $view );
-			
 		$id = self::getInputId($model, $attribute);
-		
 		$val = $model->{$attribute};
 		if (is_numeric($val)) {
 			if ($val>0) {
@@ -63,6 +62,77 @@ class DkBaseHtml extends BaseHtml
 				$model->{$attribute} = '';
 			}
 		}
+		
+		if (isset($options['layout']) && $options['layout']=='2-widgets') {
+			$s = self::activeHiddenInput($model, $attribute);
+			$name = self::getInputName($model, $attribute);
+			
+			$dateId = $id.'_date';
+			$timeId = $id.'_time';
+			
+			if ($val>0) {
+				$date =  date('d.m.Y', $val);
+				$time =  date('H:i', $val);
+			}
+			else {
+				$date = '';
+				$time = '';
+			}
+			
+			$s .= '<div class="input-group">'.
+					self::textInput($dateId, $date, ['class' => 'form-control datepicker', 'id' => $dateId, 'data-dateformat' => 'dd.mm.yy']).
+					'<span title="Сейчас" class="input-group-addon"><i class="fa fa-calendar"></i></span>'.
+					self::textInput($timeId, $time, ['class' => 'form-control', 'id' => $timeId]).
+					'<span title="Сейчас" class="input-group-addon cursor-pointer"><i class="glyphicon glyphicon-time"></i></span>'.
+			'</div>';
+			
+			ClockPickerAsset::register($view);
+			
+			$view->registerJs("
+	            $('#".$timeId."').clockpicker({
+					autoclose: true,
+					placement: 'top'
+				});
+					
+				$('#".$dateId."').datepicker({
+					dateFormat: 'dd.mm.yy'
+				});
+					
+				$('#".$timeId."').change( function(){
+					var time = $(this).val();
+					var date = $('#".$dateId."').val();
+					$('#$id').val(date + ' ' + time);
+				});
+					
+				$('#".$dateId."').change( function(){
+					var date = $(this).val();
+					var time = $('#".$timeId."').val();
+					$('#$id').val(date + ' ' + time);
+				});
+					
+				$('.cursor-pointer', $('#".$id."').parent().parent()).click( function(){
+					var d = new Date,
+						day = d.getDate()<10 ? '0' + d.getDate().toString(): d.getDate(),
+						mon = d.getMonth() < 9 ? '0' + (d.getMonth()+1).toString() : d.getMonth()+1,
+						Y = d.getFullYear(),
+						H = d.getHours() < 10 ? '0' + d.getHours().toString(): d.getHours(),
+						min = d.getMinutes()< 10 ? '0' + d.getMinutes().toString() : d.getMinutes(),
+						date = day + '.' + mon + '.' + Y,
+						time = H + ':' + min,
+	    				val = date+' '+time;
+										
+					$('#".$id."').val(val);
+					$('#".$timeId."').val(time);
+					$('#".$dateId."').val(date);
+				});
+				",
+				View::POS_READY
+			);
+			
+			return $s;
+		}
+		
+		DateTimePickerAsset::register( $view );
 		
 		$view->registerJs("
             $('#".$id."').datetimepicker({
@@ -83,7 +153,7 @@ class DkBaseHtml extends BaseHtml
 	
 		$options['class'] = 'form-control'.(isset($options['class'])?' '.$options['class']:'');
 	
-		return self::activeTextInput($model, $attribute, $options);
+		return '<div class="input-group">'.self::activeTextInput($model, $attribute, $options).'<span title="Сейчас" class="input-group-addon cursor-pointer"><i class="glyphicon glyphicon-time"></i></span></div>';
 	}
 	
 	public static function activeDateInput( $model, $attribute, $options = [])

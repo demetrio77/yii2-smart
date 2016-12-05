@@ -60,7 +60,7 @@
 				
 				// HTML
 				//основа-панель
-					$this.after('<div id="'+id+'" class="panel panel-default"><div class="fileapi panel-body"></div></div>');
+					$this.after('<div id="'+id+'" class="file-uploader panel panel-default"><div class="fileapi panel-body"></div></div>');
 					$this.content = $('.panel-body', $('#'+id));
 				
 				//меню
