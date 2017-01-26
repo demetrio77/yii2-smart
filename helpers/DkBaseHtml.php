@@ -158,7 +158,9 @@ class DkBaseHtml extends BaseHtml
 	
 	public static function activeDateInput( $model, $attribute, $options = [])
 	{
-		$options['data-dateformat'] = "yy-mm-dd";
+		if (!isset($options['data-dateformat'])) {
+		    $options['data-dateformat'] = "yy-mm-dd";
+		}
 		$options['class'] = 'form-control datepicker'.(isset($options['class'])?' '.$options['class']:'');
 			
 		return '<div class="input-group">'.self::activeTextInput($model, $attribute, $options).'<span title="Cегодня" class="input-group-addon cursor-pointer"><i class="fa fa-calendar"></i></span></div>';
