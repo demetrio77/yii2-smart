@@ -131,3 +131,13 @@ TH A:hover {
 .popover {
 	z-index: 1060;
 }
+
+.smart-form .input-group-addon .btn {
+	border-radius: 0;
+	padding: 4px 6px 5px;
+}
+
+.smart-form select.form-control {
+	padding: 0;
+	border-color: #BDBDBD;
+}

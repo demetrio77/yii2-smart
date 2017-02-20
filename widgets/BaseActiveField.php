@@ -366,6 +366,42 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			
 		return $this;
 	}
+	
+	public function linkInput($options = [] )
+	{
+	    $defaults = [
+	        'returnPath' => true,
+	        'folder' => '',
+	        'alias'=> ''
+	    ];
+	    	
+	    $options = ArrayHelper::merge($defaults, $options);
+	    $id = Html::getInputId($this->model, $this->attribute);
+	
+	    $url = $this->model->{$this->attribute};
+	
+	    $js = "$(document).ready(function(){
+			$('#".$id."-a').click( function(){
+			    var height = window.innerHeight - 200;
+			    var width  = window.innerWidth  - 200;
+			    var left = window.screenLeft+100;
+			    var top = window.screenTop+100;
+			    window.open('".Url::toRoute(['//manager/browse'])."?destination=input&id=$id&alias=".$options['alias']."&path=".$options['folder']."&fileName=' + $('#$id').val() + '&returnPath=".(int)$options['returnPath']."', 'browse', 'menubar=no,location=no,resizable=no,scrollbars=yes,left='+left+',top='+top+',status=no,height='+height+',width='+width);
+			});
+    	});";
+	    	
+	    foreach (array_keys($defaults) as $key) {
+	        if (isset($options[$key])) unset($options[$key]);
+	    }
+	    	
+	    $options = array_merge($this->inputOptions, $options);
+	    $this->adjustLabelFor($options);
+	    $this->parts['{input}'] = '<div class="input-group"><span class="input">'.Html::activeTextInput($this->model, $this->attribute, $options).'</span><span class="input-group-addon no-padding "><a id="'.$id.'-a" title="Выбрать" class="btn btn-primary">Выбрать</a></span></div>';
+			
+	    Yii::$app->view->registerJs($js);
+	    
+	    return $this;
+	}
 
 	public function imageInput($options = [])
 	{
