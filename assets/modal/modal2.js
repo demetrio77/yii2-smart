@@ -176,6 +176,10 @@ function dkmodal( options )
 			this.items[elem.id] = elem;
 		};
 		
+		this.get = function(id) {
+			return $('button[data-button-id="'+id+'"]');
+		}
+		
 		this.remove = function(id) {
 			var button = $('button[data-button-id="'+id+'"]');
 			if (button) {
