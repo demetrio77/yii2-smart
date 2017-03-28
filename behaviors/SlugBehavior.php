@@ -26,6 +26,8 @@ class SlugBehavior extends Behavior
     
     public static function slug($value)
     {
+        $value = strip_tags($value);
+        $value = html_entity_decode($value);
     	return Inflector::slug( TransliteratorHelper::process( $value ), '-', true );
     } 
     

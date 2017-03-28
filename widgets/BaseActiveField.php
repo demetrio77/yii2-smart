@@ -16,6 +16,7 @@ use yii\di\ServiceLocator;
 use demetrio77\manager\helpers\Alias;
 use demetrio77\smartadmin\helpers\typograph\Typograph;
 use demetrio77\smartadmin\assets\ClockPickerAsset;
+use demetrio77\smartadmin\assets\Select2Asset;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
@@ -447,5 +448,66 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		$this->parts['{input}'] = Html::activeDateDropDown($this->model, $this->attribute, $options);
 		return $this;
+	}
+	
+	public function remoteDropDown($url = [], $options = [])
+	{
+	    $id = Html::getInputId($this->model, $this->attribute);
+	    $view = Yii::$app->getView();	    
+	    \site\assets\Select2Asset::register( $view );
+	    
+	    $minimumInputLength = 3;
+	    $formatNoMatches = 'Ничего не найдено';
+	    $formatSearching = 'Поиск...';
+	    $formatInputTooShort = 'Введите по крайней мере 3 символа';
+	    $itemsOnPage = 15;
+	    $initSelectionUrl = false;
+	    $formatResult = null;
+	    $formatSelection = null;
+	    $escapeMarkup = false;
+	    
+	    foreach (['minimumInputLength','formatNoMatches','formatSearching','formatInputTooShort','itemsOnPage',
+	           'initSelectionUrl','formatResult','formatSelection','escapeMarkup'] as $key) {
+	        if (isset($options[$key])) {
+    	        $$key = $options[$key];
+    	        unset($options[$key]);
+    	    }
+	    }
+	    
+	    $url['itemsOnPage'] = $itemsOnPage;
+	    
+	    $view->registerJs("$('#".$id."').select2({
+		    formatNoMatches: function(q){return '$formatNoMatches';},
+			formatSearching: '$formatSearching',
+			formatInputTooShort: '$formatInputTooShort',
+	        ajax: {
+				url: '".Url::toRoute($url)."',
+				dataType: 'json',
+				quietMillis: 250,
+				data: function (term, page) { return {
+	                q: term, //search term
+	                page: page // page number
+	            }; },
+	        	results: function (data, page) {
+					var more = $itemsOnPage == data.total_count; // whether or not there are more results available
+ 					return { results: data.items, more: more };
+				},
+				cache: true
+			},
+			".($initSelectionUrl ? "initSelection: function(element, callback) {
+		        var id = $(element).val();
+		        if (id !== '') {
+		            $.ajax('".$url."id=' + id, {
+		                dataType: 'json'
+		            }).done(function(data) { callback(data); });
+		        }
+		    },":"")."
+	        ".($formatResult ? "formatResult: $formatResult,":'').
+	        ($formatSelection ? "formatSelection: $formatSelection,":'').
+			($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
+	        minimumInputLength: $minimumInputLength
+		});", View::POS_READY);
+	    
+	    return $this->dropDownList(['ff','vv']) ;
 	}
 }
