@@ -41,13 +41,13 @@ class YoutubeHelper extends Object
 	public function getImageSrc()
 	{
 		if (!$this->validUrl) return '';
-		return 'http://img.youtube.com/vi/'.$this->id.'/0.jpg';
+		return '//img.youtube.com/vi/'.$this->id.'/0.jpg';
 	}
 	
 	public function getEmbed()
 	{
 		if (!$this->validUrl) return '';
-		return "http://www.youtube.com/embed/".$this->id;
+		return "//www.youtube.com/embed/".$this->id;
 	}
 	
 	public function getAutoplay()
