@@ -73,14 +73,15 @@ function dkmodal( options )
 				target: undefined,
 				loading: false,
 				id:'',
-				left: false
+				left: false,
+				disabled:false
 			};
 			
 			$.extend(button, elem);
 			
 			switch (button.type) {
 				case 'dismiss':
-					self.footer.append('<button '+(button.id ? 'data-button-id="'+button.id+'"' : '')+'type="button" class="btn btn-default" data-dismiss="modal">'+button.caption+'</button>');
+					self.footer.append('<button '+(button.id ? 'data-button-id="'+button.id+'"' : '')+'type="button" class="btn btn-default" data-dismiss="modal"'+(button.disabled?' disabled="disabled"':'')+'>'+button.caption+'</button>');
 				break;
 			
 				case 'function':
@@ -101,6 +102,9 @@ function dkmodal( options )
 					}
 					if (button.hidden!=undefined && button.hidden) {
 						$(b).css('display','none');
+					}
+					if (button.disabled){
+						$(b).attr('disabled','disabled');
 					}
 					var action = button.action;
 					$(b).click(function(){
@@ -134,6 +138,9 @@ function dkmodal( options )
 					}
 					if (button.hidden!=undefined && button.hidden) {
 						$(b).css('display','none');
+					}
+					if (button.disabled){
+						$(b).attr('disabled','disabled');
 					}
 					$(b).click(function(){
 						$('.errorMessage', self.body).hide();
@@ -201,6 +208,20 @@ function dkmodal( options )
 				this.items[id].hidden = false;
 			}
 		};
+		this.disable = function(id){
+			var button = $('button[data-button-id="'+id+'"]');
+			if (button) {
+				button.attr('disabled', 'disabled');
+				this.items[id].disabled = true;
+			}
+		}
+		this.enable = function(id){
+			var button = $('button[data-button-id="'+id+'"]');
+			if (button) {
+				button.attr('disabled', false);
+				this.items[id].disabled = false;
+			}
+		}
 		
 		self.footer.html('');
 		for (i in buttons) {
