@@ -11,9 +11,56 @@ use yii\web\View;
 use demetrio77\smartadmin\helpers\typograph\Typograph;
 use demetrio77\smartadmin\assets\DatePickerAsset;
 use demetrio77\smartadmin\assets\ClockPickerAsset;
+use yii\helpers\ArrayHelper;
+use demetrio77\smartadmin\assets\FileUploaderAsset;
+use yii\helpers\Url;
 
 class DkBaseHtml extends BaseHtml
 {
+    public static function fileInput($name, $value = null, $options = [] )
+    {
+        $defaults = [
+            'returnPath' => false,
+            'folder' => '',
+            'alias'=>'',
+            'isImage' => false,
+            'filename' => false,
+            'tmpl' => 'upload,server,url,clear',
+            'callback' => false
+        ];
+        
+        $options = ArrayHelper::merge($defaults, $options);
+        
+        $options['id'] = $options['id'] ?? str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], $name);
+       
+        $js = "$(document).ready(function(){
+    	    $('#".$options['id']."').fileUploader({
+               value	 : '".$value."',
+               tmpl:'".$options['tmpl']."',
+               ".($options['callback']?"callback:".$options['callback'].',':'')."
+               ".($options['returnPath'] ? "returnPath: true,":'')."
+               ".($options['isImage'] ? "isImage: true,":'')."
+               ".($options['filename'] ? "filename: '".$options['filename']."',":'')."
+               connector: '".Url::toRoute(['//manager/connector'])."',
+               browse: '".Url::toRoute(['//manager/browse'])."',
+    	       alias: '".$options['alias']."',
+    	       folder: '".$options['folder']."'
+    		});
+    	});";
+        
+        foreach (array_keys($defaults) as $key) {
+            if (isset($options[$key])) unset($options[$key]);
+        }
+        
+        $view = Yii::$app->getView();
+        FileUploaderAsset::register( $view );
+        $view->registerJs($js);
+        
+        return parent::hiddenInput($name, $value, $options);
+    }
+    
+    
+    
 	public static function select2($name, $selection = null, $items = [], $options = [])
 	{
 		return static::dropDownList($name, $selection, $items, $options);
