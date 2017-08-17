@@ -271,8 +271,30 @@
 		    	           $this.urlHide();
 		    	           $this.progressShow();
 		    	           
-		    	           var filename = $this.settings.filename ? $this.settings.filename : $this.linkName.val().trim();
-		    	           var ext = $this.linkExt.text().trim();
+		    	           if ($this.settings.filename){
+		    	        	    var filename = $this.settings.filename;
+					    		var ext = '';
+					    		var lastDotPos = filename.lastIndexOf('.');
+					    		
+					    		if (lastDotPos==-1) {
+					    			var url = $this.linkInput.val();
+					    			var a = document.createElement("a");
+					    			a.href = url;
+					    			lastDotPos = a.pathname.lastIndexOf('.');
+					    			if (lastDotPos>-1){
+					    				ext = a.pathname.substr(lastDotPos + 1);
+					    			}
+					    		}
+					    		else {
+					    			ext = $this.settings.filename.substr(lastDotPos + 1);
+					    			filename  = $this.settings.filename.substr(0, lastDotPos);
+					    		}
+		    	           }
+					       else {
+					    		var filename = $this.linkName.val().trim();
+					    		var ext =      $this.linkExt.text().trim();
+					       }
+		    	           
 		    	           var tmp = Math.floor(Math.random() * 998999)+1000;
 		    	           var interval = setInterval(function()
 		                   {
@@ -343,8 +365,28 @@
 					        }
 					    },
 					    onBeforeUpload: function (evt, uiEvt) {
-					    	uiEvt.widget.options.data.filename = $this.settings.filename ? $this.settings.filename : $this.fileName.val().trim();
-					    	uiEvt.widget.options.data.ext = $this.fileExt.text().trim(); 
+					    	if ($this.settings.filename){
+					    		var filename = $this.settings.filename;
+					    		var extension = '';
+					    		var lastDotPos = filename.lastIndexOf('.');
+					    		
+					    		if (lastDotPos==-1) {
+					    			lastDotPos = uiEvt.files[0].name.lastIndexOf('.');
+					    			if (lastDotPos>-1){
+					    				extension = uiEvt.files[0].name.substr(lastDotPos + 1);
+					    			}
+					    		}
+					    		else {
+					    			extension = $this.settings.filename.substr(lastDotPos + 1);
+					    			filename  = $this.settings.filename.substr(0, lastDotPos);
+					    		}
+					    	}
+					    	else {
+					    		var filename = $this.fileName.val().trim();
+					    		var extension = $this.fileExt.text().trim();
+					    	}
+					    	uiEvt.widget.options.data.filename = filename;
+					    	uiEvt.widget.options.data.ext = extension;
 					    },
 					    onSelect: function (evt, ui){
 					    	if ($this.settings.filename) return ;
