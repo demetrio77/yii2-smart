@@ -446,6 +446,11 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	
 	public function dateDropDown( $options = [])
 	{
+	    $value = $this->model->{$this->attribute};
+	    $date = date_parse($value);
+	    if (!$date['error_count']){
+	        $this->model->{$this->attribute} = $date['year'].'-'.($date['month']<10?'0':'').$date['month'].'-'.($date['day']<10?'0':'').$date['day'];
+	    }
 		$this->parts['{input}'] = Html::activeDateDropDown($this->model, $this->attribute, $options);
 		return $this;
 	}
