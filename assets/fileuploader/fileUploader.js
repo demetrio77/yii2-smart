@@ -22,7 +22,8 @@
 		callback: false,
 		returnPath: false,
 		connector:'',
-		browse:''
+		browse:'',
+		maxFileSize: 0
 	};
 	
 	var globalObjects = {};
@@ -273,26 +274,14 @@
 		    	           
 		    	           if ($this.settings.filename){
 		    	        	    var filename = $this.settings.filename;
-					    		var ext = '';
 					    		var lastDotPos = filename.lastIndexOf('.');
 					    		
-					    		if (lastDotPos==-1) {
-					    			var url = $this.linkInput.val();
-					    			var a = document.createElement("a");
-					    			a.href = url;
-					    			lastDotPos = a.pathname.lastIndexOf('.');
-					    			if (lastDotPos>-1){
-					    				ext = a.pathname.substr(lastDotPos + 1);
-					    			}
-					    		}
-					    		else {
-					    			ext = $this.settings.filename.substr(lastDotPos + 1);
+					    		if (lastDotPos!=-1) {
 					    			filename  = $this.settings.filename.substr(0, lastDotPos);
 					    		}
 		    	           }
 					       else {
 					    		var filename = $this.linkName.val().trim();
-					    		var ext =      $this.linkExt.text().trim();
 					       }
 		    	           
 		    	           var tmp = Math.floor(Math.random() * 998999)+1000;
@@ -312,7 +301,7 @@
 		                   }, 100);
 		                   
 		                   $.ajax({
-		                       data: {link:link,filename:filename,ext:ext,_csrf: csrfToken},
+		                       data: {link:link,filename:filename,_csrf: csrfToken},
 		                       async:true, dataType:'json',method:'POST',
 		                       url: $this.settings.connector + '?action=link&options[force]=1&options[tmp]='+tmp+'&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.folder,
 		                       success:function(result){
@@ -342,7 +331,7 @@
 					$this.content.fileapi({
 						url: $this.settings.connector + '?action=upload&options[force]=1&options[alias]='+$this.settings.alias+'&options[path]='+$this.settings.folder,
 						multiple: false,
-						maxSize: 100 * FileAPI.MB,
+						maxSize: ($this.settings.maxFileSize?$this.settings.maxFileSize:100) * FileAPI.MB,
 						autoUpload: $this.settings.filename!='',
 					    data: { '_csrf' : csrfToken },
 						elements: {
@@ -367,26 +356,16 @@
 					    onBeforeUpload: function (evt, uiEvt) {
 					    	if ($this.settings.filename){
 					    		var filename = $this.settings.filename;
-					    		var extension = '';
 					    		var lastDotPos = filename.lastIndexOf('.');
 					    		
-					    		if (lastDotPos==-1) {
-					    			lastDotPos = uiEvt.files[0].name.lastIndexOf('.');
-					    			if (lastDotPos>-1){
-					    				extension = uiEvt.files[0].name.substr(lastDotPos + 1);
-					    			}
-					    		}
-					    		else {
-					    			extension = $this.settings.filename.substr(lastDotPos + 1);
+					    		if (lastDotPos!=-1) {
 					    			filename  = $this.settings.filename.substr(0, lastDotPos);
 					    		}
 					    	}
 					    	else {
 					    		var filename = $this.fileName.val().trim();
-					    		var extension = $this.fileExt.text().trim();
 					    	}
 					    	uiEvt.widget.options.data.filename = filename;
-					    	uiEvt.widget.options.data.ext = extension;
 					    },
 					    onSelect: function (evt, ui){
 					    	if ($this.settings.filename) return ;

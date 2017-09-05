@@ -17,6 +17,7 @@ use demetrio77\manager\helpers\Alias;
 use demetrio77\smartadmin\helpers\typograph\Typograph;
 use demetrio77\smartadmin\assets\ClockPickerAsset;
 use demetrio77\smartadmin\assets\Select2Asset;
+use demetrio77\manager\Module;
 
 class BaseActiveField extends \yii\widgets\ActiveField
 {
@@ -330,13 +331,21 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			'isImage' => false,
 			'filename' => false,
 			'tmpl' => 'upload,server,url,clear',
-			'callback' => false
+			'callback' => false,
+		    'maxFileSize' => 0
 		];
 			
 		$options = ArrayHelper::merge($defaults, $options);
 		$id = Html::getInputId($this->model, $this->attribute);
 	
 		$url = $this->model->{$this->attribute};
+		
+		if (!$options['maxFileSize']){
+		    if ($options['alias']){
+		        $Module = Module::getInstance();
+		        $options['maxFileSize'] = $Module->aliases[$options['alias']]['maxFileSize'] ?? 0;
+		    }
+		}
 	
 		$js = "$(document).ready(function(){
     	    $('#".$id."').fileUploader({
@@ -346,6 +355,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
                ".($options['returnPath'] ? "returnPath: true,":'')."
                ".($options['isImage'] ? "isImage: true,":'')."
                ".($options['filename'] ? "filename: '".$options['filename']."',":'')."
+               ".($options['maxFileSize'] ? "maxFileSize: '".$options['maxFileSize']."',":'')."
                connector: '".Url::toRoute(['//manager/connector'])."',
                browse: '".Url::toRoute(['//manager/browse'])."',
     	       alias: '".$options['alias']."',
