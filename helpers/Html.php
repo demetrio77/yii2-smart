@@ -131,6 +131,13 @@ class Html extends DkBaseHtml
 		$view->registerJs("$('select[name=\"".$name."\"]').select2();");
 		return parent::select2($name, $selection, $items, $options);
 	}
+	
+	public static function dropDownMultiple($name, $selection = null, $items = [], $options = [])
+	{
+	    $options['multiple'] = true;
+	    
+	    return self::select2($name, $selection, $items, $options);
+	}
 		
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
