@@ -29,7 +29,7 @@ class SlugBehavior extends Behavior
         $value = strip_tags($value);
         $value = html_entity_decode($value);
     	return Inflector::slug( TransliteratorHelper::process( $value ), '-', true );
-    } 
+    }
     
     public function getSlug( $event )
     {
