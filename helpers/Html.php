@@ -47,7 +47,7 @@ class Html extends DkBaseHtml
 	{
 		return self::tag('div', parent::activeTextarea($model, $attribute, $options), ['class' => 'textarea']);
 	}
-			
+	
 	public static function radio($name, $checked = false, $options = [])
 	{
 		$options['checked'] = (bool) $checked;
