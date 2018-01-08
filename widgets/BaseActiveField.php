@@ -122,14 +122,40 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		$view = Yii::$app->getView();
 		ColorPickerAsset::register( $view );
-		$id = Html::getInputId($this->model, $this->attribute);
+		/*$id = Html::getInputId($this->model, $this->attribute);
+        $spanId = 'span-'.$id;
 		$view->registerJs("
             $('#".$id."').colorpicker().on('changeColor', function(ev) {
-                $('#".$id."').css('background-color', ev.color.toHex() )
-            });"
+                $('#".$spanId."').css('background-color', ev.color.toHex() );
+            }).on('change', function(ev){
+                console.log($(this).val());
+            });
+            "
 		);
-		$options[ 'style'] = 'background-color: '.$this->model->{ $this->attribute};
-		return $this->textInput( $options );
+		$style = 'background-color: '.$this->model->{ $this->attribute};
+
+		$options = array_merge($this->inputOptions, $options);
+		$this->adjustLabelFor($options);
+
+		$this->parts['{input}'] = '<div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).
+		  '<span style="min-width:50px;'.$style.'" id="'.$spanId.'" class="input-group-addon"><i class="fa"></i></span></div>';
+		return $this;*/
+		
+		$id = Html::getInputId($this->model, $this->attribute);
+		$divId = 'div-'.$id;
+		$options = array_merge($this->inputOptions, $options);
+		$this->adjustLabelFor($options);
+		
+		$this->parts['{input}'] = '<div id="'.$divId.'" class="input-group colorpicker-component">'.Html::activeTextInput($this->model, $this->attribute, $options).
+		'<span style="min-width:50px;" class="input-group-addon"><i></i></span></div>';
+		
+		$view->registerJs("
+            $('#".$divId."').colorpicker({
+                format: null
+            });
+        ");
+		return $this;
+		
 	}
 	
 	public function clockInput( $options = [] )

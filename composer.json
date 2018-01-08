@@ -12,8 +12,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.6"
+        "itsjavi/bootstrap-colorpicker": "^2.5"
     },
     "autoload": {
         "psr-4": {
