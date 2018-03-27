@@ -204,7 +204,7 @@ class UpDownBehavior extends Behavior
     		// Move Down:
     		$recordsCount = $this->countGroupRecords();
     		if ($position >= $recordsCount) {
-    			return false;
+    		    $position = $recordsCount-1;
     		}
     		$this->owner->updateAllCounters(
     			[
