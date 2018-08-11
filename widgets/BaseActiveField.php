@@ -495,7 +495,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 	    $id = Html::getInputId($this->model, $this->attribute);
 	    $view = Yii::$app->getView();	    
-	    \site\assets\Select2Asset::register( $view );
+	    \demetrio77\smartadmin\assets\Select2Asset::register( $view );
 	    
 	    $minimumInputLength = 3;
 	    $formatNoMatches = 'Ничего не найдено';
@@ -506,9 +506,9 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	    $formatResult = null;
 	    $formatSelection = null;
 	    $escapeMarkup = false;
-	    
+	    $callback = '';
 	    foreach (['minimumInputLength','formatNoMatches','formatSearching','formatInputTooShort','itemsOnPage',
-	           'initSelectionUrl','formatResult','formatSelection','escapeMarkup'] as $key) {
+	           'initSelectionUrl','formatResult','formatSelection','escapeMarkup','callback'] as $key) {
 	        if (isset($options[$key])) {
     	        $$key = $options[$key];
     	        unset($options[$key]);
@@ -530,6 +530,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	                page: page // page number
 	            }; },
 	        	results: function (data, page) {
+                    console.log(data.items);
 					var more = $itemsOnPage == data.total_count; // whether or not there are more results available
  					return { results: data.items, more: more };
 				},
@@ -545,10 +546,10 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		    },":"")."
 	        ".($formatResult ? "formatResult: $formatResult,":'').
 	        ($formatSelection ? "formatSelection: $formatSelection,":'').
-			($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
+	        ($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
 	        minimumInputLength: $minimumInputLength
-		});", View::POS_READY);
+		})". ($callback ? ".on('change', ".$callback.")" : '').";", View::POS_READY);
 	    
-	    return $this->dropDownList(['ff','vv']) ;
+	    return $this->textInput([]) ;
 	}
 }

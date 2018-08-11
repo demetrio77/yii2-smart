@@ -212,4 +212,27 @@ class DkBaseHtml extends BaseHtml
 			
 		return '<div class="input-group">'.self::activeTextInput($model, $attribute, $options).'<span title="Cегодня" class="input-group-addon cursor-pointer"><i class="fa fa-calendar"></i></span></div>';
 	}
+	
+	public static function dateDropDown($name, $value=null, $options=[])
+	{
+	    $opts = [];
+	    if (isset($options['minYear'])) {
+	        $opts[] = "minYear: ".$options['minYear'];
+	        unset($options['minYear']);
+	    }
+	    if (isset($options['maxYear'])) {
+	        $opts[] = "maxYear: ".$options['maxYear'];
+	        unset($options['maxYear']);
+	    }
+	    if (isset($options['defaultDate'])) {
+	        $opts[] = "defaultDate: '".$options['defaultDate']."'";
+	        unset($options['defaultDate']);
+	    }
+	    $name = strtolower($name);
+	    $id = str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], $name).'Div';
+	    $view = Yii::$app->getView();
+	    DateDropDownAsset::register($view);
+	    $view->registerJs("$('#".$id."').dateDropDown(".($opts?"{".implode(',', $opts)."}":'').");");
+	    return '<div id="'.$id.'">'.static::hiddenInput($name, $value, $options).'</div>';
+	}
 }

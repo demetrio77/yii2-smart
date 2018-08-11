@@ -176,7 +176,7 @@
 					$this.uploadHide = function() { $this.upload.slideUp (300); };
 				
 				//публикация рисунка
-					$this.apply = function ( result, withCallback ) 
+					$this.apply = function ( result, withCallback, sourceLink ) 
 					{
 						if (withCallback == undefined ) withCallback = true;
 						var value = $this.settings.returnPath ? result.path : result.url;
@@ -192,7 +192,10 @@
 						}
 						
 						if (withCallback && $this.settings.callback!==false) {
-							$this.settings.callback( result );
+							if (typeof sourceLink != 'undefined') {
+								result.sourceLink = sourceLink;
+							}
+							$this.settings.callback( result, $this );
 						}
 						
 						$this.urlHide();
@@ -314,7 +317,7 @@
 		                                alert(result.message);
 		                            break;                          
 		                            case 'success':
-		                                $this.apply(result);
+		                                $this.apply(result, true, link);
 		                            break;
 		    			          }
 		                       },
