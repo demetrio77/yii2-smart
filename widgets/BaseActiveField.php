@@ -246,11 +246,17 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			unset( $options['hints']);
 			$showHints = true;
 		}
-		
+ 
 		foreach ($items as $key => $value) {
-			$items[$key] = Typograph::remove($value);
+		    if (is_array($value)) {
+		        foreach ($value as $kv => $vv) {
+		            $items[$key][$kv] = Typograph::remove($vv);
+		        }
+		    } else {
+		        $items[$key] = Typograph::remove($value);
+		    }
 		}
-		 
+
 		$view = Yii::$app->getView();
 		\demetrio77\smartadmin\assets\Select2Asset::register( $view );
 		$id = Html::getInputId($this->model, $this->attribute);
@@ -449,7 +455,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	
 	public function dropDownMultiple( $items = [], $options = [], $tags = false)
 	{
-		$style = 'padding:0; border:0;';
+	    $style = 'padding:0; border:0;';
 		if (!isset($options['style']))
 			$options['style'] = $style;
 		else
