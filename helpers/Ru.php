@@ -2,9 +2,9 @@
 
 namespace demetrio77\smartadmin\helpers;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
-class Ru extends Object
+class Ru extends BaseObject
 {
 	public static function padeg($number, $variants)
 	{

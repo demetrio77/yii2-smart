@@ -2,7 +2,7 @@
 
 namespace demetrio77\smartadmin\helpers;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Изымаем видео и превью Ютуба.
@@ -13,7 +13,7 @@ use yii\base\Object;
  * 
  * @author Dmitry Karpov
  */
-class YoutubeHelper extends Object
+class YoutubeHelper extends BaseObject
 {
 	public $url = '';
 	public $validUrl = false;

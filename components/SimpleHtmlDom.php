@@ -2,9 +2,9 @@
 
 namespace demetrio77\smartadmin\components;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
-class SimpleHtmlDom extends Object
+class SimpleHtmlDom extends BaseObject
 {
 	public static function instance()
 	{

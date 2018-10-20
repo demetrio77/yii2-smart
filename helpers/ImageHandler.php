@@ -2,8 +2,8 @@
 
 namespace demetrio77\smartadmin\helpers;
 
-use yii\base\Object;
 use yii\base\Exception;
+use yii\base\BaseObject;
 
 /**
  * Image handler
@@ -13,7 +13,7 @@ use yii\base\Exception;
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-class ImageHandler extends Object
+class ImageHandler extends BaseObject
 {
 	private $originalImage = null;
 	private $image = null;
