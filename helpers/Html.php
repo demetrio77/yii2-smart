@@ -8,6 +8,7 @@ use demetrio77\smartadmin\assets\DateDropDownAsset;
 use demetrio77\smartadmin\widgets\JarvisWidget;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
 use demetrio77\smartadmin\helpers\DkBaseHtml;
+use yii\web\View;
 
 class Html extends DkBaseHtml
 {
@@ -146,5 +147,134 @@ class Html extends DkBaseHtml
 		$id = self::getInputId($model, $attribute);
 		$view->registerJs("$('#".$id."').select2();");
 		return parent::activeSelect2($model, $attribute, $items, $options);
-	}	
+	}
+	
+	public function remoteDropDown($name, $value, $url = [], $options = [])
+	{
+	    $view = Yii::$app->getView();
+	    \demetrio77\smartadmin\assets\Select2Asset::register( $view );
+	    
+	    $minimumInputLength = 3;
+	    $formatNoMatches = 'Ничего не найдено';
+	    $formatSearching = 'Поиск...';
+	    $itemsOnPage = 15;
+	    $initSelectionUrl = false;
+	    $formatResult = null;
+	    $formatSelection = null;
+	    $escapeMarkup = false;
+	    $callback = '';
+	    foreach (['minimumInputLength','formatNoMatches','formatSearching','formatInputTooShort','itemsOnPage',
+	        'initSelectionUrl','formatResult','formatSelection','escapeMarkup','callback','minimumInputLength'] as $key) {
+	        if (isset($options[$key])) {
+	            $$key = $options[$key];
+	            unset($options[$key]);
+	        }
+	    }
+	    $formatInputTooShort = 'Введите по крайней мере '.$minimumInputLength.' символ(а)';
+	    $url['itemsOnPage'] = $itemsOnPage;
+	    
+	    $view->registerJs("$('input[name=$name]').select2({
+	        formatNoMatches: function(q){return '$formatNoMatches';},
+	        formatSearching: '$formatSearching',
+	        formatInputTooShort: '$formatInputTooShort',
+	        ajax: {
+    	        url: '".Url::toRoute($url)."',
+    	        dataType: 'json',
+    	        quietMillis: 250,
+    	        data: function (term, page) {
+    	        return {
+    	        q: term, //search term
+    	        page: page // page number
+        	};
+        	},
+        	        results: function (data, page) {
+        	        var more = $itemsOnPage == data.total_count; // whether or not there are more results available
+        	        return {
+        	        results: data.items,
+        	        more: more
+        	};
+        	},
+        	        cache: true
+        	},
+	        ".($initSelectionUrl ? "initSelection: function(element, callback) {
+		        var id = $(element).val();
+		        if (id !== '') {
+		            $.ajax('".$initSelectionUrl."id=' + id, {
+		                dataType: 'json'
+		            }).done(function(data) { callback(data); });
+		        }
+		    },":"")."
+	        ".($formatResult ? "formatResult: $formatResult,":'').
+	        ($formatSelection ? "formatSelection: $formatSelection,":'').
+	        ($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
+	        minimumInputLength: $minimumInputLength
+	})". ($callback ? ".on('change', ".$callback.")" : '').";", View::POS_READY);
+	        
+	        return self::textInput($name, $value, $options);
+	}
+	
+	public function activeRemoteDropDown($model, $attribute, $url = [], $options = [])
+	{
+	    $id = self::getInputId($model, $attribute);
+	    $view = Yii::$app->getView();
+	    \demetrio77\smartadmin\assets\Select2Asset::register( $view );
+	    
+	    $minimumInputLength = 3;
+	    $formatNoMatches = 'Ничего не найдено';
+	    $formatSearching = 'Поиск...';
+	    $itemsOnPage = 15;
+	    $initSelectionUrl = false;
+	    $formatResult = null;
+	    $formatSelection = null;
+	    $escapeMarkup = false;
+	    $callback = '';
+	    foreach (['minimumInputLength','formatNoMatches','formatSearching','formatInputTooShort','itemsOnPage',
+	        'initSelectionUrl','formatResult','formatSelection','escapeMarkup','callback','minimumInputLength'] as $key) {
+	        if (isset($options[$key])) {
+	            $$key = $options[$key];
+	            unset($options[$key]);
+	        }
+	    }
+	    $formatInputTooShort = 'Введите по крайней мере '.$minimumInputLength.' символ(а)';
+	    $url['itemsOnPage'] = $itemsOnPage;
+	    
+	    $view->registerJs("$('#".$id."').select2({
+	        formatNoMatches: function(q){return '$formatNoMatches';},
+	        formatSearching: '$formatSearching',
+	        formatInputTooShort: '$formatInputTooShort',
+	        ajax: {
+    	        url: '".Url::toRoute($url)."',
+    	        dataType: 'json',
+    	        quietMillis: 250,
+    	        data: function (term, page) { 
+                    return {
+    	               q: term, //search term
+    	               page: page // page number
+        	       };
+                },
+    	        results: function (data, page) {
+    	           var more = $itemsOnPage == data.total_count; // whether or not there are more results available
+    	           return { 
+                        results: data.items, 
+                        more: more 
+                   };
+    	        },
+    	        cache: true
+    	    },
+	        ".($initSelectionUrl ? "initSelection: function(element, callback) {
+		        var id = $(element).val();
+		        if (id !== '') {
+		            $.ajax('".$initSelectionUrl."id=' + id, {
+		                dataType: 'json'
+		            }).done(function(data) { callback(data); });
+		        }
+		    },":"")."
+	        ".($formatResult ? "formatResult: $formatResult,":'').
+	        ($formatSelection ? "formatSelection: $formatSelection,":'').
+	        ($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
+	        minimumInputLength: $minimumInputLength
+	   })". ($callback ? ".on('change', ".$callback.")" : '').";", View::POS_READY);
+	        
+	   return self::activeTextInput($model, $attribute, $options);
+	}
 }

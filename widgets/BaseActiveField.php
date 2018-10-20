@@ -539,7 +539,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			".($initSelectionUrl ? "initSelection: function(element, callback) {
 		        var id = $(element).val();
 		        if (id !== '') {
-		            $.ajax('".$url."id=' + id, {
+		            $.ajax('".$initSelectionUrl."id=' + id, {
 		                dataType: 'json'
 		            }).done(function(data) { callback(data); });
 		        }
