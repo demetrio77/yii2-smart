@@ -68,9 +68,16 @@ class DkBaseHtml extends BaseHtml
 	
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
-		foreach ($items as $key => $value) {
-			$items[$key] = Typograph::remove($value);
-		}
+	    foreach ($items as $key => $value) {
+	        if (is_array($value)) {
+	            foreach ($value as $kv => $vv) {
+	                $items[$key][$kv] = Typograph::remove($vv);
+	            }
+	        } else {
+	            $items[$key] = Typograph::remove($value);
+	        }
+	    }
+	    
 		return static::activeListInput('dropDownList', $model, $attribute, $items, $options);
 	}
 	

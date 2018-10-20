@@ -267,6 +267,7 @@ class UpDownBehavior extends Behavior
     		BaseActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
     		BaseActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
     		BaseActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
+    	    'afterSoftDelete' => 'afterDelete',
         ];
      }
      
@@ -350,21 +351,4 @@ class UpDownBehavior extends Behavior
     		]
     	);
 	}
-
-/*
-     public function beforeUpdate( $event ) 
-    {
-        if ( $this->subCategoryField ) {
-            $model = $this->owner;
-            if ( $model->oldAttributes[ $this->subCategoryField ] != $model->{$this->subCategoryField}) {
-                //у старых сдвинуть вверх
-                $ordinal = $model->{$this->ordinalField};
-                $where = $this->ordinalField.'>:ordinal AND '.$this->subCategoryField.'=:f';
-                $params = [':ordinal' => $ordinal, ':f'  => $model->oldAttributes[ $this->subCategoryField ] ];
-                $model->updateAllCounters([ $this->ordinalField => -1 ], $where, $params );
-                //у новых поместить в конец
-                $model->{$this->ordinalField} = $model::find()->where( [ $this->subCategoryField => $model->{$this->subCategoryField} ] )->count();
-            }   
-        }
-    }*/
 }
