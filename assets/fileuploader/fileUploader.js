@@ -45,6 +45,10 @@
 	    	$this = globalObjects[$(this).attr('id')].obj;
 	    	$this.settings[setting] = value;
 	    },
+	    
+	    instance: function(){
+	    	return globalObjects[$(this).attr('id')].obj;
+	    },
 			
 	    init: function (options) {
 	
@@ -127,6 +131,11 @@
 					$this.linkName = $('.file-url-name', $this.url);
 					$this.linkExt = $('.link-ext', $this.url);
 					
+					$this.applyLinkName = function(){
+						var res = processLinkText($this.linkInput.val());
+						$this.linkExt.text(res.ext);
+						$this.linkName.val(res.name);
+					};
 					function processLinkText(v) {
 						var expl = v.split(/[\?\#\=\+\&\,]{1}/);
 						v = expl[0];
@@ -144,9 +153,7 @@
 					
 					$this.linkInput.bind('paste keyup change input', function(e){
 						setTimeout( function() {
-							var res = processLinkText($this.linkInput.val());
-							$this.linkExt.text(res.ext);
-							$this.linkName.val(res.name);
+							$this.applyLinkName();
 				        }, 100);                					
 					});
 					
@@ -411,6 +418,10 @@
 function FileUploader() {
 	this.set = function($id, $value) {
 		$('#'+$id).fileUploader('set', $value);
+	};
+	
+	this.instance = function($id) {
+		return $('#'+$id).fileUploader('instance');
 	}
 }
 
