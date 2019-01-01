@@ -107,7 +107,7 @@ class DkBaseHtml extends BaseHtml
 	{
 		$view = Yii::$app->getView();
 		$id = self::getInputId($model, $attribute);
-		$val = $model->{$attribute};
+		$val = $model->{$attribute} ?? '';
 		if (is_numeric($val)) {
 			if ($val>0) {
 				$model->{$attribute} = date('d.m.Y H:i', $val);

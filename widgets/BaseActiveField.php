@@ -421,8 +421,6 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	    $options = ArrayHelper::merge($defaults, $options);
 	    $id = Html::getInputId($this->model, $this->attribute);
 	
-	    $url = $this->model->{$this->attribute};
-	
 	    $js = "$(document).ready(function(){
 			$('#".$id."-a').click( function(){
 			    var height = window.innerHeight - 200;
