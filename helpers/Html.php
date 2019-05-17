@@ -43,7 +43,7 @@ class Html extends DkBaseHtml
 			return parent::endForm();
 		}
 		self::$jarwisWidget = false;
-		echo parent::endForm().'</div>
+		return parent::endForm().'</div>
     		</div>
     	</div>';
 	}
