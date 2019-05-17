@@ -1,11 +1,9 @@
 <?php
-
 namespace yii\helpers;
 
 use Yii;
 use demetrio77\smartadmin\assets\Select2Asset;
 use demetrio77\smartadmin\assets\DateDropDownAsset;
-use demetrio77\smartadmin\widgets\JarvisWidget;
 use demetrio77\smartadmin\assets\DateTimePickerAsset;
 use demetrio77\smartadmin\helpers\DkBaseHtml;
 use yii\web\View;
@@ -17,13 +15,18 @@ class Html extends DkBaseHtml
 	public static function beginForm($action = '', $method = 'post', $options = [])
 	{
 		$noSmartForm = false;
-		
+		$beginHtml = '';
 		if (isset($options['jarwis'])) {
 			self::$jarwisWidget = true;
 			unset($options['jarwis']);
-			JarvisWidget::begin(['nopadding'=> true, 'title'=>isset($options['title'])?$options['title']:'']);
+			$beginHtml = '
+			    <div class="jarviswidget jarviswidget-color-darken" id="wid-id-'.($options['id'] ?? uniqid()).'" data-widget-editbutton="false" data-widget-deletebutton="false" data-widget-sortable="false">
+			<header><h2 class="font-md">'.($options['title'] ?? '').'</h2></header>
+			<div>
+				<div class="jarviswidget-editbox"></div>						
+    			<div class="widget-body no-padding">';
 		}
-		
+
 		if (isset($options['noSmartForm'])) {
 			$noSmartForm = true;
 			unset($options['noSmartForm']);
@@ -31,7 +34,7 @@ class Html extends DkBaseHtml
 		
 		$options['class'] = (isset($options['class']) ?  $options['class'] : '').(!$noSmartForm?' smart-form':'');
 			
-		return parent::beginForm($action, $method, $options);
+		return $beginHtml . parent::beginForm($action, $method, $options);
 	}
 	
 	public static function endForm()
@@ -40,8 +43,9 @@ class Html extends DkBaseHtml
 			return parent::endForm();
 		}
 		self::$jarwisWidget = false;
-		echo parent::endForm();
-		JarvisWidget::end();
+		echo parent::endForm().'</div>
+    		</div>
+    	</div>';
 	}
 	
 	public static function activeTextarea($model, $attribute, $options = [])
