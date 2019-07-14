@@ -246,7 +246,7 @@ function dkmodal( options )
 			settings.url, function(){
 				self.title.text(settings.title);
 				self.buttons = new buttons(settings.buttons);
-				settings.afterLoad(this);
+				settings.afterLoad(self);
 				self.onClose = function() { settings.onClose()};
 				self.open();
 				$('form', self.body).submit( function(){
