@@ -28,6 +28,13 @@ class SlugBehavior extends Behavior
     {
         $value = strip_tags($value);
         $value = html_entity_decode($value);
+        $cyrillic = [
+            'ё' => 'jo','ж' => 'zh','й' => 'j','х' => 'h','ц' => 'ts','ч' => 'ch','ш' => 'sh','щ' => 'sch',
+            'ъ' => 'j','ы' => 'y','ь' => '','э' => 'e','ю' => 'ju','я' => 'ja',
+            'Ё' => 'Jo','Ж' => 'Zh','Й' => 'J','Х' => 'H','Ц' => 'Ts','Ч' => 'Ch','Ш' => 'Sh','Щ' => 'Sch',
+            'Ъ' => 'J','Ы' => 'Y','Ь' => '','Э' => 'E','Ю' => 'Ju','Я' => 'Ja',
+        ];
+        $value = str_replace(array_keys($cyrillic), array_values($cyrillic), $value);
     	return Inflector::slug( TransliteratorHelper::process( $value ), '-', true );
     }
     

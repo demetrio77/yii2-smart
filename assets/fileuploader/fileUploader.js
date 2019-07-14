@@ -72,7 +72,7 @@
 					
 					var hasUpload = $this.settings.tmpl.indexOf('upload')>-1;
 					var hasUrl    = $this.settings.tmpl.indexOf('url')>-1;
-					var hasServer = $this.settings.tmpl.indexOf('s')>-1;
+					var hasServer = $this.settings.tmpl.indexOf('server')>-1;
 					var hasClear    = $this.settings.tmpl.indexOf('clear')>-1;				
 					
 					$this.content.append('<section class="image-uploader-menu">'+
