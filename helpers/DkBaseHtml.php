@@ -208,6 +208,16 @@ class DkBaseHtml extends BaseHtml
         return '<div class="input-group">' . self::activeTextInput($model, $attribute, $options) . '<span title="Сейчас" class="input-group-addon cursor-pointer"><i class="glyphicon glyphicon-time"></i></span></div>';
     }
 
+    public static function dateInput($name, $value, $options = [])
+    {
+        if (!isset($options['data-dateformat'])) {
+            $options['data-dateformat'] = "yy-mm-dd";
+        }
+        $options['class'] = 'form-control datepicker' . (isset($options['class']) ? ' ' . $options['class'] : '');
+
+        return '<div class="input-group">' . self::textInput($name, $value, $options) . '<span class="input-group-addon cursor-pointer"><i class="fa fa-calendar"></i></span></div>';
+    }
+
     public static function activeDateInput($model, $attribute, $options = [])
     {
         if (!isset($options['data-dateformat'])) {

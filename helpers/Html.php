@@ -16,7 +16,7 @@ class Html extends DkBaseHtml
 	{
 		$noSmartForm = false;
 		$beginHtml = '';
-		if (isset($options['jarwis'])) {
+		if (isset($options['jarwis']) && $options['jarwis']) {
 			self::$jarwisWidget = true;
 			unset($options['jarwis']);
 			$beginHtml = '
