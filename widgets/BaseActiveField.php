@@ -461,7 +461,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-	
+
 		if ($tags) {
 			$view = Yii::$app->getView();
 			\demetrio77\smartadmin\assets\Select2Asset::register( $view );

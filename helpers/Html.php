@@ -133,17 +133,12 @@ class Html extends DkBaseHtml
 	{
 		$view = Yii::$app->getView();
 		Select2Asset::register( $view );
-		$view->registerJs("$('select[name=\"".$name."\"]').select2();");
+        $options['id'] = $options['id'] ?? str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], $name);
+
+        $view->registerJs("$('#".$options['id']."').select2();");
 		return parent::select2($name, $selection, $items, $options);
 	}
-	
-	public static function dropDownMultiple($name, $selection = null, $items = [], $options = [])
-	{
-	    $options['multiple'] = true;
-	    
-	    return self::select2($name, $selection, $items, $options);
-	}
-		
+
 	public static function activeSelect2($model, $attribute, $items = [], $options = [])
 	{
 		$view = Yii::$app->getView();
@@ -281,4 +276,33 @@ class Html extends DkBaseHtml
 	        
 	   return self::activeTextInput($model, $attribute, $options);
 	}
+
+
+    public static function dropDownMultiple($name, $value = null, $items = [], $options = [], $tags = false)
+    {
+        $style = 'padding:0; border:0;';
+        if (!isset($options['style']))
+            $options['style'] = $style;
+        else
+            $options['style'] .= $style;
+
+        $options['id'] = $options['id'] ?? str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], $name);
+
+        if ($tags) {
+            $view = Yii::$app->getView();
+            \demetrio77\smartadmin\assets\Select2Asset::register( $view );
+
+            $js = "$('#".$options['id']."').select2({
+				tags:['".implode("','", $items)."'],
+				tokenSeparators: [',']
+			});";
+            $view->registerJs($js);
+
+            return self::textInput($name, $value, $options);
+        }
+        else {
+            $options['multiple'] = true;
+            return self::select2($name, $value, $items, $options);
+        }
+    }
 }
