@@ -131,6 +131,12 @@ class Html extends DkBaseHtml
 	
 	public static function select2($name, $selection = null, $items = [], $options = [])
 	{
+        $style = 'padding:0; border:0;';
+        if (!isset($options['style']))
+            $options['style'] = $style;
+        else
+            $options['style'] .= $style;
+
 		$view = Yii::$app->getView();
 		Select2Asset::register( $view );
         $options['id'] = $options['id'] ?? str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], $name);
