@@ -103,7 +103,7 @@ class SlugBehavior extends Behavior
         $where = '('.$this->slugAttribute.'=:slugValue)';
         $params = [ ':slugValue' => $value ];
         if (! $model->isNewRecord ) {
-        	$pkWhere  = '0';
+        	$pkWhere  = 'false';
             foreach ($pk as $attribute) {
                 $pkWhere .= ' OR ( '.$attribute.'<>:'.$attribute.')';
                 $params[':'.$attribute] = $model->{$attribute};
