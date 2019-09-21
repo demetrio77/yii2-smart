@@ -6,6 +6,7 @@ function dkmodal( options )
 	this.title = '';
 	this.body = undefined;
 	this.footer = undefined;
+	this.allowClose = true;
 	this.buttons = [];
 	this.onClose = function() {};
 	this.options = {
@@ -38,6 +39,15 @@ function dkmodal( options )
 			self.div.remove();
 			delete self;
 		});
+
+		this.div.on('hide.bs.modal', function(e){
+            if( !self.allowClose ) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
+            }
+        });
+
 		this.title  = $('.modal-title', this.div);
 		this.body   = $('.modal-body' , this.div);
 		this.footer = $('.modal-footer', this.div);		
