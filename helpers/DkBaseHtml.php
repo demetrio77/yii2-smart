@@ -263,7 +263,8 @@ class DkBaseHtml extends BaseHtml
             'callback' => false,
             'cropWidth' => 100,
             'cropHeight' => 100,
-            'callback' => 'function(){}'
+            'callback' => 'function(){}',
+            'template' => '<div class="row" id="{id}"><div class="col-xs-12 col-md-4">{image}</div><div class="col-xs-12 col-md-8"><div>{input}</div></div></div>'
         ];
 
         $options = ArrayHelper::merge($defaults, $options);
@@ -282,7 +283,8 @@ class DkBaseHtml extends BaseHtml
     	       folder: '" . $options['folder'] . "',
     	       cropWidth: ".$options['cropWidth'].",
     	       cropHeight: ".$options['cropHeight'].",
-    	       callback: ".$options['callback']."
+    	       callback: ".$options['callback'].",
+    	       template: '".$options['template']."'
     		});
     	});";
 

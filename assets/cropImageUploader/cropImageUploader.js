@@ -23,8 +23,10 @@
         tempAlias: '',
         folder: '',
         cropWidth: 100,
-        cropHeight: 100
-    };
+        cropHeight: 100,
+        template:'<div class="row" id="{id}"><div class="col-xs-12 col-md-4">{image}</div><div class="col-xs-12 col-md-8"><div>{input}</div></div></div>'
+    };//<img id="' + id + 'image" style="max-width:100%" src="'+ $this.settings.value +'" />
+    //                  '<input type="hidden" id="' + id + 'temp" name="' + $this.attr('name') + 'temp" />'+
 
     var globalObjects = {};
     var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -46,17 +48,11 @@
 
                 // HTML
                 //основа-панель
-                console.log($this.settings.value);
-                $this.after('<div class="row" id="'+id+'">' +
-                    '<div class="col-xs-12 col-md-4">' +
-                        '<img id="' + id + 'image" style="max-width:100%" src="'+ $this.settings.value +'" />'+
-                    '</div>' +
-                    '<div class="col-xs-12 col-md-8">' +
-                        '<div>' +
-                            '<input type="hidden" id="' + id + 'temp" name="' + $this.attr('name') + 'temp" />'+
-                        '</div>'+
-                    '</div>' +
-                '</div>');
+                $this.after( $this.settings.template
+                    .replace('{id}', id)
+                    .replace('{image}', '<img id="' + id + 'image" style="max-width:100%" src="'+ $this.settings.value +'" />')
+                    .replace('{input}', '<input type="hidden" id="' + id + 'temp" name="' + $this.attr('name') + 'temp" />')
+                );
 
                 $this.saveButton = false;
                 $this.jcrop = null;
