@@ -226,9 +226,11 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$view = Yii::$app->getView();
 		\CkEditorAsset::register( $view );
 		$id = Html::getInputId($this->model, $this->attribute);
-		$view->registerJs("$('#".$id."').ckeditor({
+		$view->registerJs("
+		var ck = CKEDITOR.replace('".$id."', {
     		filebrowserBrowseUrl: '".Url::toRoute($route)."'
-		});");
+		});
+		");
 		 
 		return $this->textarea( $options );
 	}
