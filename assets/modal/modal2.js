@@ -10,11 +10,11 @@ function dkmodal( options )
 	this.buttons = [];
 	this.onClose = function() {};
 	this.options = {
-		width: '600px'	
+		width: '600px'
 	}
-	
+
 	$.extend(this.options, options);
-	
+
 	this.init = function() {
 		var id = Math.round(Math.random()*100000);
 		do {
@@ -22,7 +22,7 @@ function dkmodal( options )
 			id++;
 		}
 		while($('#'+this.id).length>0);
-		
+
 		$('body').append('<div id="'+this.id+'"></div>');
 		this.div = $('#'+this.id);
 		this.div.addClass('modal')
@@ -30,10 +30,17 @@ function dkmodal( options )
 				.attr('role','dialog')
 				.attr('aria-labelledby','myLargeModalLabel')
 				.attr('aria-hidden',true)
-				.html('<div class="modal-dialog"' + (this.options.width ?'style="width:'+this.options.width+';"': '') + '><div class="modal-content"><div class="modal-header">'+
-			       		'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">'+
-			       		'</h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div>');
-		
+				.html('<div class="modal-dialog modal-lg modal-dialog-centered"' + (this.options.width ?'style="width:'+this.options.width+';"': '') + ' role="document">' +
+					'<div class="modal-content">' +
+						'<div class="modal-header">'+
+							'<h5 class="modal-title"></h5>' +
+							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true" area-label="close">&times;</button>' +
+						'</div>' +
+						'<div class="modal-body"></div>' +
+						'<div class="modal-footer"></div>' +
+					'</div>' +
+				'</div>');
+
 		this.div.on('hidden.bs.modal', function (e) {
 			self.onClose();
 			self.div.remove();
@@ -50,25 +57,24 @@ function dkmodal( options )
 
 		this.title  = $('.modal-title', this.div);
 		this.body   = $('.modal-body' , this.div);
-		this.footer = $('.modal-footer', this.div);		
+		this.footer = $('.modal-footer', this.div);
 	}
-	
+
 	this.init();
-	
+
 	this.close = function() {
 		this.div.modal('hide');
 	};
-	
+
 	this.open = function() {
-		console.log( $('#'+this.id).attr('id') );
 		this.div.modal('show');
 	};
-	
+
 
 	function buttons(buttons)
 	{
 		this.items = [];
-		
+
 		this.add = function(elem) {
 			var button = {
 				type: 'submit',
@@ -86,14 +92,14 @@ function dkmodal( options )
 				left: false,
 				disabled:false
 			};
-			
+
 			$.extend(button, elem);
-			
+
 			switch (button.type) {
 				case 'dismiss':
 					self.footer.append('<button '+(button.id ? 'data-button-id="'+button.id+'"' : '')+'type="button" class="btn btn-default" data-dismiss="modal"'+(button.disabled?' disabled="disabled"':'')+'>'+button.caption+'</button>');
 				break;
-			
+
 				case 'function':
 					var b = new $('<button>');
 					$(b).attr('type','button').addClass('btn');
@@ -125,7 +131,7 @@ function dkmodal( options )
 					});
 					self.footer.append(b);
 				break;
-				
+
 				case 'submit':
 				default:
 					var b = new $('<button>');
@@ -170,8 +176,8 @@ function dkmodal( options )
 										//все хорошо, все сделано, больше ничего не надо, закрываем окно
 										case 'success' : button.afterSave(h);  self.close(); break;
 										//форма не прошла валидацию, она пришла в поле html
-										case 'validate': 
-											self.body.html(h.html); 
+										case 'validate':
+											self.body.html(h.html);
 											button.afterValidate(h);
 										break;
 										//обновим страницу
@@ -192,11 +198,11 @@ function dkmodal( options )
 			}
 			this.items[elem.id] = elem;
 		};
-		
+
 		this.get = function(id) {
 			return $('button[data-button-id="'+id+'"]');
 		}
-		
+
 		this.remove = function(id) {
 			var button = $('button[data-button-id="'+id+'"]');
 			if (button) {
@@ -232,13 +238,13 @@ function dkmodal( options )
 				this.items[id].disabled = false;
 			}
 		}
-		
+
 		self.footer.html('');
 		for (i in buttons) {
 			this.add(buttons[i]);
 		}
 	};
-	
+
 	this.form = function(options) {
 		var settings = {
 			title : '',
@@ -247,11 +253,11 @@ function dkmodal( options )
 			afterLoad  : function() {},
 			onClose : function() {}
 		};
-		
+
 		if (options) {
 			$.extend(settings, options);
 		}
-		
+
 		this.body.load(
 			settings.url, function(){
 				self.title.text(settings.title);
@@ -265,7 +271,7 @@ function dkmodal( options )
 			}
 		);
 	}
-	
+
 	this.message = function(options){
 		var settings = {
 			title: '',
@@ -274,11 +280,11 @@ function dkmodal( options )
 			onClose : function() {},
 			html: ''
 		};
-		
+
 		if (options) {
 			$.extend(settings, options);
 		}
-		
+
 		self.body.html(settings.html);
 		self.title.text(settings.title);
 		self.buttons = new buttons(settings.buttons);

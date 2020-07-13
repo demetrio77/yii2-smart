@@ -19,32 +19,32 @@ use demetrio77\smartadmin\assets\ClockPickerAsset;
 use demetrio77\smartadmin\assets\Select2Asset;
 use demetrio77\manager\Module;
 
-class BaseActiveField extends \yii\widgets\ActiveField
+class BaseActiveField extends \yii\bootstrap4\ActiveField
 {
 	public $labelCols = 3;
 	public $inputCols = 9;
-	
+
 	public function init()
 	{
 		parent::init();
-		
+
 		if ( property_exists($this->form, 'layout') && $this->form->layout == ActiveForm::LAYOUT_HORIZONTAL && $this->template=="{label}\n{input}\n{hint}\n{error}") {
 			$this->template = str_replace(['{labelCols}','{inputCols}'], [$this->labelCols,$this->inputCols], $this->form->horizontalFieldTemplate);
 		}
 	}
-	
+
 	public function strongPassword($options = [])
 	{
 		$length = 8;
-	
+
 		if (isset($options['length'])) {
 			$length = $options['length'];
 			unset($options['length']);
 		}
-	
+
 		$view = Yii::$app->getView();
 		$id = Html::getInputId($this->model, $this->attribute);
-	
+
 		$this->template = "{label}\n{input}
 		<div class='input-group'>
 		<div id='{$id}-text' style='line-height:32px; text-indent: 10px;' class='form-control'></div>
@@ -52,7 +52,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		<a id='{$id}-button' class='btn btn-xs btn-warning'>Генерировать</a>
 		</div>
 		</div>\n{hint}\n{error}";
-	
+
 		$view->registerJs("
 	$('#{$id}-button').click( function(){
 		var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
@@ -65,10 +65,10 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$('#$id').val(randomstring);
 		$('#{$id}-text').text(randomstring);
 	});", View::POS_READY);
-	
+
 		return $this->hiddenInput($options);
 	}
-	
+
 	public function lookupDropDownList( $lookupModelName, $lookupModelField, $params=[], $options = [] )
 	{
 		/**
@@ -81,28 +81,28 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$where = [];
 		$autoComplete = false;
 		$options = array_merge($this->inputOptions, $options);
-	
+
 		foreach ($params as $property => $value) {
 			if (isset($$property)) $$property = $value;
 		}
-	
+
 		$query = new \yii\db\Query();
-	
+
 		$query->select([$lookupModelPk, $lookupModelField])
 			->from($lookupModelName)
 			->orderBy($lookupModelField);
-	
+
 		if ($where) {
 			foreach ($where as $w)
 				$query->andWhere( $w );
 		}
-	
+
 		$items = ArrayHelper::map(
 			$query->all(),
 			$lookupModelPk,
 			$lookupModelField
 		);
-		 
+
 		if ($autoComplete) {
 			$view = Yii::$app->getView();
 			\demetrio77\smartadmin\assets\Select2Asset::register( $view );
@@ -110,14 +110,14 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			$js = "$(document).ready(function(){ $('#".$id."').select2({}); });";
 			$view->registerJs($js);
 		}
-	
+
 		if ($allowEmpty) {
 			$items = \yii\helpers\ArrayHelper::merge([$defaultEmptyPk => $defaultEmptyValue], $items);
 		}
-	
+
 		return $this->dropDownList( $items, $options );
 	}
-	
+
 	public function colorInput( $options = [] )
 	{
 		$view = Yii::$app->getView();
@@ -140,31 +140,31 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$this->parts['{input}'] = '<div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).
 		  '<span style="min-width:50px;'.$style.'" id="'.$spanId.'" class="input-group-addon"><i class="fa"></i></span></div>';
 		return $this;*/
-		
+
 		$id = Html::getInputId($this->model, $this->attribute);
 		$divId = 'div-'.$id;
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-		
+
 		$this->parts['{input}'] = '<div id="'.$divId.'" class="input-group colorpicker-component">'.Html::activeTextInput($this->model, $this->attribute, $options).
 		'<span style="min-width:50px;" class="input-group-addon"><i></i></span></div>';
-		
+
 		$view->registerJs("
             $('#".$divId."').colorpicker({
                 format: null
             });
         ");
 		return $this;
-		
+
 	}
-	
+
 	public function clockInput( $options = [] )
 	{
 		$view = Yii::$app->getView();
 		ClockPickerAsset::register( $view );
-		
+
 		$id = Html::getInputId($this->model, $this->attribute);
-		
+
 		$view->registerJs("
             $('#".$id."').clockpicker({
 				autoclose: true,
@@ -172,27 +172,27 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			});",
 			View::POS_READY
 		);
-		
+
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-		
+
 		$this->parts['{input}'] = '<div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).'<span class="input-group-addon"><i class="fa fa-clock-o"></i></span></div>';
 		return $this;
 	}
-	
+
 	public function dateInput( $options = [])
 	{
 		$this->inputOptions['class'] .= ' datepicker';
 		$options['data-dateformat'] = "yy-mm-dd";
-	
+
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-		 
+
 		$this->parts['{input}'] = '<div class="input-group">'.Html::activeTextInput($this->model, $this->attribute, $options).'<span title="Cегодня" class="input-group-addon cursor-pointer"><i class="fa fa-calendar"></i></span></div>';
-		 
+
 		return $this;
 	}
-	
+
 	public function dateTimeInput( $options = [])
 	{
 		$options = array_merge($this->inputOptions, $options);
@@ -200,7 +200,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$this->parts['{input}'] = Html::activeDateTimeInput($this->model, $this->attribute, $options);
 		return $this;
 	}
-	
+
 	public function ckEditor ( $options = [])
 	{
 		$route = ['//manager/ckeditor'];
@@ -210,7 +210,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			'alias'=>false
 		];
 		$options = ArrayHelper::merge($defaults, $options);
-		 
+
 		if ($options['defaultFolder']) {
 			$route['defaultFolder'] = $options['defaultFolder'];
 		}
@@ -218,11 +218,11 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			$route['alias'] = $options['alias'];
 		}
 		$route['configuration'] = $options['configuration'];
-		 
+
 		foreach ($defaults as $key) {
 			if (isset($options[$key])) unset($options['key']);
 		}
-		 
+
 		$view = Yii::$app->getView();
 		\CkEditorAsset::register( $view );
 		$id = Html::getInputId($this->model, $this->attribute);
@@ -231,15 +231,15 @@ class BaseActiveField extends \yii\widgets\ActiveField
     		filebrowserBrowseUrl: '".Url::toRoute($route)."'
 		});
 		");
-		 
+
 		return $this->textarea( $options );
 	}
-	
+
 	public function dropDownListAutoComplete($items, $options = [])
 	{
 		$showHints = false;
 		$hints = [];
-		 
+
 		if (isset($options['hints'])) {
 			$h = $options['hints'];
 			foreach ($h as $key => $val) {
@@ -248,7 +248,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			unset( $options['hints']);
 			$showHints = true;
 		}
- 
+
 		foreach ($items as $key => $value) {
 		    if (is_array($value)) {
 		        foreach ($value as $kv => $vv) {
@@ -262,7 +262,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$view = Yii::$app->getView();
 		\demetrio77\smartadmin\assets\Select2Asset::register( $view );
 		$id = Html::getInputId($this->model, $this->attribute);
-	
+
 		$js = "$('#".$id."').select2({".($showHints ? "
 		    formatResult: format,
 			formatSelection: format":'')."
@@ -273,15 +273,15 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			return state.text+\"<br /><span style=\'font-size:80%\'>\"+$(originalOption).data(\"hint\")+\"</span>\";
 		}" : "");
 		$view->registerJs($js);
-		 
+
 		return $this->dropDownList($items, ArrayHelper::merge($options, [ 'options' => $hints ]));
 	}
-	
+
 	public function spriteInput($sprite, $width, $height, $options = [])
 	{
 		$view = Yii::$app->getView();
 		SpriteInputAsset::register($view);
-		 
+
 		$val = trim($this->model->{$this->attribute});
 		$x = 'null';
 		$y = 'null';
@@ -293,14 +293,14 @@ class BaseActiveField extends \yii\widgets\ActiveField
 				$y  = abs($matches[2][0]);
 			}
 		}
-		 
+
 		if (isset($options['background-color'])) {
 			$bg = $options['background-color'];
 			unset($options['background-color']);
 		}
 		$options['class'] = (isset($options['class'])?$options['class'].' ':'').'form-control';
 		$id = Html::getInputId($this->model, $this->attribute);
-		 
+
 		$view->registerJs("$ ('#".$id."').spriteInput({
 				x: $x,
 				y: $y,
@@ -309,19 +309,19 @@ class BaseActiveField extends \yii\widgets\ActiveField
 				".($bg ? "backgroundColor: '$bg',":"")."
 				sprite: '$sprite'
 		});", View::POS_READY);
-	 
+
 		$this->parts['{input}'] = Html::activeHiddenInput($this->model, $this->attribute, $options);
 		return $this;
 	}
-	
+
 	public function markInput($options=[])
 	{
 		$view = Yii::$app->getView();
 		StarRatingAsset::register( $view );
 		$id = Html::getInputId($this->model, $this->attribute);
-		
+
 		$view->registerJs("$ ('#".$id."').rating();");
-		
+
 		$this->inputOptions['class'] .= ' rating';
 		if (!isset($options['min'])) {
 			$options['min'] = 0;
@@ -335,27 +335,27 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		if (!isset($options['disabled'])) {
 			$options['disabled'] = false;
 		}
-	
+
 		$options['data']['size'] = isset($options['size'])?$options['size']:'lg';
-	
+
 		$options['type'] = 'number';
 		$options['data']['show-clear']=false;
 		$options['data']['show-caption']=false;
-	
+
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
-	
+
 		$this->parts['{input}'] = Html::activeTextInput($this->model, $this->attribute, $options);
 		return $this;
 	}
-	
+
 	public function numberInput($options=[])
 	{
 		parent::textInput($options);
 		$this->parts['{input}'] = Html::activeInput('number', $this->model, $this->attribute, $options);
 		return $this;
 	}
-	
+
 	public function fileInput($options = [] )
 	{
 		$defaults = [
@@ -368,19 +368,19 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			'callback' => false,
 		    'maxFileSize' => 0
 		];
-			
+
 		$options = ArrayHelper::merge($defaults, $options);
 		$id = Html::getInputId($this->model, $this->attribute);
-	
+
 		$url = $this->model->{$this->attribute};
-		
+
 		if (!$options['maxFileSize']){
 		    if ($options['alias']){
 		        $Module = Module::getInstance();
 		        $options['maxFileSize'] = $Module->aliases[$options['alias']]['maxFileSize'] ?? 0;
 		    }
 		}
-	
+
 		$js = "$(document).ready(function(){
     	    $('#".$id."').fileUploader({
                value	 : '".$this->model->{$this->attribute}."',
@@ -396,22 +396,22 @@ class BaseActiveField extends \yii\widgets\ActiveField
     	       folder: '".$options['folder']."'
     		});
     	});";
-			
+
 		foreach (array_keys($defaults) as $key) {
 			if (isset($options[$key])) unset($options[$key]);
 		}
-			
+
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
 		$this->parts['{input}'] = Html::activeHiddenInput($this->model, $this->attribute);
-			
+
 		$view = Yii::$app->getView();
 		FileUploaderAsset::register( $view );
 		$view->registerJs($js);
-			
+
 		return $this;
 	}
-	
+
 	public function linkInput($options = [] )
 	{
 	    $defaults = [
@@ -419,10 +419,10 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	        'folder' => '',
 	        'alias'=> ''
 	    ];
-	    	
+
 	    $options = ArrayHelper::merge($defaults, $options);
 	    $id = Html::getInputId($this->model, $this->attribute);
-	
+
 	    $js = "$(document).ready(function(){
 			$('#".$id."-a').click( function(){
 			    var height = window.innerHeight - 200;
@@ -432,17 +432,17 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			    window.open('".Url::toRoute(['//manager/browse'])."?destination=input&id=$id&alias=".$options['alias']."&path=".$options['folder']."&fileName=' + $('#$id').val() + '&returnPath=".(int)$options['returnPath']."', 'browse', 'menubar=no,location=no,resizable=no,scrollbars=yes,left='+left+',top='+top+',status=no,height='+height+',width='+width);
 			});
     	});";
-	    	
+
 	    foreach (array_keys($defaults) as $key) {
 	        if (isset($options[$key])) unset($options[$key]);
 	    }
-	    	
+
 	    $options = array_merge($this->inputOptions, $options);
 	    $this->adjustLabelFor($options);
 	    $this->parts['{input}'] = '<div class="input-group"><span class="input">'.Html::activeTextInput($this->model, $this->attribute, $options).'</span><span class="input-group-addon no-padding "><a id="'.$id.'-a" title="Выбрать" class="btn btn-primary">Выбрать</a></span></div>';
-			
+
 	    Yii::$app->view->registerJs($js);
-	    
+
 	    return $this;
 	}
 
@@ -451,8 +451,8 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$options['isImage'] = true;
 		return $this->fileInput($options);
 	}
-	
-	
+
+
 	public function dropDownMultiple( $items = [], $options = [], $tags = false)
 	{
 	    $style = 'padding:0; border:0;';
@@ -460,7 +460,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			$options['style'] = $style;
 		else
 			$options['style'] .= $style;
-	
+
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
 
@@ -468,24 +468,24 @@ class BaseActiveField extends \yii\widgets\ActiveField
 			$view = Yii::$app->getView();
 			\demetrio77\smartadmin\assets\Select2Asset::register( $view );
 			$id = Html::getInputId($this->model, $this->attribute);
-		
+
 			$js = "$('#".$id."').select2({
 				tags:['".implode("','", $items)."'],
 				tokenSeparators: [',']
 			});";
-			
+
 			$this->parts['{input}'] = Html::activeTextInput($this->model, $this->attribute, $options);
-			
+
 			$view->registerJs($js);
-		} 
+		}
 		else {
 			$options['multiple'] = true;
 			$this->parts['{input}'] = Html::activeSelect2($this->model, $this->attribute, $items, $options);
 		}
-		
+
 		return $this;
 	}
-	
+
 	public function dateDropDown( $options = [])
 	{
 	    $value = $this->model->{$this->attribute};
@@ -496,13 +496,13 @@ class BaseActiveField extends \yii\widgets\ActiveField
 		$this->parts['{input}'] = Html::activeDateDropDown($this->model, $this->attribute, $options);
 		return $this;
 	}
-	
+
 	public function remoteDropDown($url = [], $options = [])
 	{
 	    $id = Html::getInputId($this->model, $this->attribute);
-	    $view = Yii::$app->getView();	    
+	    $view = Yii::$app->getView();
 	    \demetrio77\smartadmin\assets\Select2Asset::register( $view );
-	    
+
 	    $minimumInputLength = 3;
 	    $formatNoMatches = 'Ничего не найдено';
 	    $formatSearching = 'Поиск...';
@@ -520,9 +520,9 @@ class BaseActiveField extends \yii\widgets\ActiveField
     	        unset($options[$key]);
     	    }
 	    }
-	    
+
 	    $url['itemsOnPage'] = $itemsOnPage;
-	    
+
 	    $view->registerJs("$('#".$id."').select2({
 		    formatNoMatches: function(q){return '$formatNoMatches';},
 			formatSearching: '$formatSearching',
@@ -555,7 +555,7 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	        ($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
 	        minimumInputLength: $minimumInputLength
 		})". ($callback ? ".on('change', ".$callback.")" : '').";", View::POS_READY);
-	    
+
 	    return $this->textInput([]) ;
 	}
 }
