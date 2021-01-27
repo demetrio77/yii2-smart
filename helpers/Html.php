@@ -11,7 +11,7 @@ use yii\web\View;
 class Html extends DkBaseHtml
 {
 	public static $jarwisWidget=false;
-	
+
 	public static function beginForm($action = '', $method = 'post', $options = [])
 	{
 		$noSmartForm = false;
@@ -31,12 +31,12 @@ class Html extends DkBaseHtml
 			$noSmartForm = true;
 			unset($options['noSmartForm']);
 		}
-		
+
 		$options['class'] = (isset($options['class']) ?  $options['class'] : '').(!$noSmartForm?' smart-form':'');
-			
+
 		return $beginHtml . parent::beginForm($action, $method, $options);
 	}
-	
+
 	public static function endForm()
 	{
 		if (!self::$jarwisWidget) {
@@ -47,12 +47,12 @@ class Html extends DkBaseHtml
     		</div>
     	</div>';
 	}
-	
+
 	public static function activeTextarea($model, $attribute, $options = [])
 	{
 		return self::tag('div', parent::activeTextarea($model, $attribute, $options), ['class' => 'textarea']);
 	}
-	
+
 	public static function radio($name, $checked = false, $options = [])
 	{
 		$options['checked'] = (bool) $checked;
@@ -83,7 +83,7 @@ class Html extends DkBaseHtml
 			return $hidden . static::input('radio', $name, $value, $options);
 		}
 	}
-	
+
 	public static function checkbox($name, $checked = false, $options = [])
 	{
 		$options['checked'] = (bool) $checked;
@@ -123,12 +123,12 @@ class Html extends DkBaseHtml
 			return $hidden . self::tag('label', static::input('checkbox', $name, $value, $options).self::tag('i'), $labelOptions);
 		}
 	}
-	
+
 	public static function activeDateTimeInput($model, $attribute, $options = [])
 	{
 		return self::tag('label', parent::activeDateTimeInput($model, $attribute, $options), ['class' => 'input']);
 	}
-	
+
 	public static function select2($name, $selection = null, $items = [], $options = [])
 	{
         $style = 'padding:0; border:0;';
@@ -153,12 +153,12 @@ class Html extends DkBaseHtml
 		$view->registerJs("$('#".$id."').select2();");
 		return parent::activeSelect2($model, $attribute, $items, $options);
 	}
-	
+
 	public function remoteDropDown($name, $value, $url = [], $options = [])
 	{
 	    $view = Yii::$app->getView();
 	    \demetrio77\smartadmin\assets\Select2Asset::register( $view );
-	    
+
 	    $minimumInputLength = 3;
 	    $formatNoMatches = 'Ничего не найдено';
 	    $formatSearching = 'Поиск...';
@@ -177,7 +177,7 @@ class Html extends DkBaseHtml
 	    }
 	    $formatInputTooShort = 'Введите по крайней мере '.$minimumInputLength.' символ(а)';
 	    $url['itemsOnPage'] = $itemsOnPage;
-	    
+
 	    $view->registerJs("$('input[name=$name]').select2({
 	        formatNoMatches: function(q){return '$formatNoMatches';},
 	        formatSearching: '$formatSearching',
@@ -214,16 +214,16 @@ class Html extends DkBaseHtml
 	        ($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
 	        minimumInputLength: $minimumInputLength
 	})". ($callback ? ".on('change', ".$callback.")" : '').";", View::POS_READY);
-	        
+
 	        return self::textInput($name, $value, $options);
 	}
-	
+
 	public function activeRemoteDropDown($model, $attribute, $url = [], $options = [])
 	{
 	    $id = self::getInputId($model, $attribute);
 	    $view = Yii::$app->getView();
 	    \demetrio77\smartadmin\assets\Select2Asset::register( $view );
-	    
+
 	    $minimumInputLength = 3;
 	    $formatNoMatches = 'Ничего не найдено';
 	    $formatSearching = 'Поиск...';
@@ -242,7 +242,7 @@ class Html extends DkBaseHtml
 	    }
 	    $formatInputTooShort = 'Введите по крайней мере '.$minimumInputLength.' символ(а)';
 	    $url['itemsOnPage'] = $itemsOnPage;
-	    
+
 	    $view->registerJs("$('#".$id."').select2({
 	        formatNoMatches: function(q){return '$formatNoMatches';},
 	        formatSearching: '$formatSearching',
@@ -279,7 +279,7 @@ class Html extends DkBaseHtml
 	        ($escapeMarkup ? "escapeMarkup: function (m) { return m; }," : '')."
 	        minimumInputLength: $minimumInputLength
 	   })". ($callback ? ".on('change', ".$callback.")" : '').";", View::POS_READY);
-	        
+
 	   return self::activeTextInput($model, $attribute, $options);
 	}
 
