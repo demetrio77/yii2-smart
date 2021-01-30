@@ -3,6 +3,7 @@
 namespace demetrio77\smartadmin\helpers;
 
 use demetrio77\smartadmin\assets\CropImageUploaderAsset;
+use demetrio77\smartadmin\assets\DateRangePickerAsset;
 use Yii;
 use yii\db\Exception;
 use yii\helpers\BaseHtml;
@@ -263,7 +264,8 @@ class DkBaseHtml extends BaseHtml
             'callback' => false,
             'cropWidth' => 100,
             'cropHeight' => 100,
-            'callback' => 'function(){}'
+            'callback' => 'function(){}',
+            'template' => '<div class="row" id="{id}"><div class="col-xs-12 col-md-4">{image}</div><div class="col-xs-12 col-md-8"><div>{input}</div></div></div>'
         ];
 
         $options = ArrayHelper::merge($defaults, $options);
@@ -282,7 +284,8 @@ class DkBaseHtml extends BaseHtml
     	       folder: '" . $options['folder'] . "',
     	       cropWidth: ".$options['cropWidth'].",
     	       cropHeight: ".$options['cropHeight'].",
-    	       callback: ".$options['callback']."
+    	       callback: ".$options['callback'].",
+    	       template: '".$options['template']."'
     		});
     	});";
 
@@ -295,5 +298,63 @@ class DkBaseHtml extends BaseHtml
         CropImageUploaderAsset::register($view);
 
         return parent::hiddenInput($name, $value, $options);
+    }
+
+    public static function dateRangePicker($name1, $name2, $value1=null, $value2=null, $options = [])
+    {
+        $View = \Yii::$app->getView();
+        DateRangePickerAsset::register($View);
+
+        if (!isset($options['inputOptions']['id'])) {
+            $id = uniqid('datepicker-');
+            $options['inputOptions']['id'] = $id;
+        }
+        else {
+            $id = $options['inputOptions']['id'];
+        }
+
+        $opens = $options['opens'] ?? 'left';
+
+        $value = ($value1 && $value2) ? "$value1 - $value2" : '';
+
+        $View->registerJs("
+            $('#".$id."').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                },
+                alwaysShowCalendars: true,
+                opens: '$opens',
+                ranges: ".(($options['ranges']) ?? "{
+                   'Today': [moment(), moment()],
+                   'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                   'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                   'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                   'This Month': [moment().startOf('month'), moment().endOf('month')],
+                   'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }")."
+            });
+
+            $('#".$id."').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                $('input[name=\"".$name1."\"]').val(picker.startDate.format('MM/DD/YYYY'));
+                $('input[name=\"".$name2."\"]').val(picker.endDate.format('MM/DD/YYYY'));
+                $('input[name=\"".$name1."\"]').change();
+                $('input[name=\"".$name2."\"]').change();
+                return true;
+            });
+        
+            $('#".$id."').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+                $('input[name=\"".$name1."\"]').val('');
+                $('input[name=\"".$name2."\"]').val('');
+                $('input[name=\"".$name1."\"]').change();
+                $('input[name=\"".$name2."\"]').change();
+            });
+        ");
+
+        return self::textInput(null, $value, $options['inputOptions'] ?? []).
+            self::hiddenInput($name1, $value1, $options['input1Options'] ?? []).
+            self::hiddenInput($name2, $value2, $options['input2Options'] ?? []);
     }
 }

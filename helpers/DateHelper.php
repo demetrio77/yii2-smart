@@ -48,6 +48,9 @@ class DateHelper
 		if (isset($options['roman']) && $options['roman']) {
 			return self::$roman[$i];
 		}
+        if (isset($options['letters']) && $options['letters']>0){
+            return mb_substr(self::$months[$i],0,$options['letters']);
+        }
 		return !$rod ? (isset(self::$months[$i])?self::$months[$i]:'') : (isset(self::$monthsRod[$i])?self::$monthsRod[$i]:'');
 	}
 	
