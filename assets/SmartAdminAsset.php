@@ -20,10 +20,13 @@ class SmartAdminAsset extends BaseAsset
         'css/vendors.bundle.css',
         'css/app.bundle.css',
         'css/skins/skin-master.css',
+        'css/fa-solid.css',
+        'css/notifications/toastr/toastr.css',
     ];
     public $cssOptions = ['media' => 'screen,print', 'type' => 'text/css', 'rel' => 'stylesheet'];
     public $js = [
         'js/vendors.bundle.js',
         'js/app.bundle.js',
+        'js/notifications/toastr/toastr.js',
     ];
 }
