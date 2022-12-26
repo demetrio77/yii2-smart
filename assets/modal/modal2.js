@@ -116,9 +116,15 @@ function dkmodal( options )
 					if (button.disabled){
 						$(b).attr('disabled','disabled');
 					}
+					if (button.loading!==false) {
+						$(b).attr('data-loading-text', button.loading);
+					}
 					var action = button.action;
 					$(b).click(function(){
 						if (button.beforeSave()) {
+							if (button.loading!==false) {
+								$(b).button('loading');
+							}
 							action();
 							button.afterSave();
 						}
