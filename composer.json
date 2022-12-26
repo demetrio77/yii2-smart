@@ -11,22 +11,6 @@
             "homepage": "http://yiiframework.com"
         }
     ],
-    "require": {
-        "itsjavi/bootstrap-colorpicker": "~2.5.3"
-    },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "itsjavi/bootstrap-colorpicker",
-                "version": "2.5.3",
-                "dist": {
-                    "url": "https://github.com/itsjavi/bootstrap-colorpicker/archive/refs/tags/2.5.3.zip",
-                    "type": "zip"
-                }
-            }
-        }
-    ],
     "autoload": {
         "psr-4": {
             "demetrio77\\smartadmin\\": ""
