@@ -3,6 +3,7 @@
 namespace demetrio77\smartadmin\behaviors;
 
 use yii\behaviors\AttributeBehavior;
+use yii\console\Application;
 use yii\db\BaseActiveRecord;
 use Yii;
 
@@ -48,7 +49,13 @@ class UserIdBehavior extends AttributeBehavior
     protected function getValue($event)
     {
     	if ($this->value === null) {
-    		return isset(Yii::$app->{$this->userComponent},Yii::$app->{$this->userComponent}->id) ? Yii::$app->{$this->userComponent}->id : 0;
+    		return
+                !Yii::$app instanceof Application
+                && Yii::$app->has($this->userComponent)
+                && Yii::$app->get($this->userComponent)
+                && Yii::$app->get($this->userComponent)->getId() ?
+                    Yii::$app->get($this->userComponent)->getId()
+                : 0;
         }
         return parent::getValue($event);
     }
