@@ -45,7 +45,7 @@ $.datepicker.regional['ru'] = {
 	dateFormat: 'yy-mm-dd',
 	firstDay: 1, 
 	isRTL: false,
-	yearRange: "1870:2020"
+	yearRange: "1870:2060"
 }; 
 
 $.datepicker.setDefaults($.datepicker.regional['ru']);

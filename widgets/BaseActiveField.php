@@ -184,7 +184,8 @@ class BaseActiveField extends \yii\widgets\ActiveField
 	{
 		$this->inputOptions['class'] .= ' datepicker';
 		$options['data-dateformat'] = "yy-mm-dd";
-	
+	    $options['autocomplete'] = 'off';
+        
 		$options = array_merge($this->inputOptions, $options);
 		$this->adjustLabelFor($options);
 		 
