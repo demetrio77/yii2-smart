@@ -4,6 +4,7 @@ namespace demetrio77\smartadmin\helpers;
 
 use demetrio77\smartadmin\assets\CropImageUploaderAsset;
 use demetrio77\smartadmin\assets\DateRangePickerAsset;
+use demetrio77\smartadmin\assets\DateRangeSelectorAsset;
 use demetrio77\smartadmin\assets\GoogleButtonAsset;
 use Yii;
 use yii\db\Exception;
@@ -357,6 +358,57 @@ class DkBaseHtml extends BaseHtml
         return self::textInput(null, $value, $options['inputOptions'] ?? []).
             self::hiddenInput($name1, $value1, $options['input1Options'] ?? []).
             self::hiddenInput($name2, $value2, $options['input2Options'] ?? []);
+    }
+
+    /**
+     * @param $name1
+     * @param $name2
+     * @param $value1
+     * @param $value2
+     * @param $options
+     * @return string
+     */
+    public static function dateRangeSeparatePicker($name1, $name2, $value1 = null, $value2 = null, $options = [])
+    {
+        $View = \Yii::$app->getView();
+        DateRangeSelectorAsset::register($View);
+
+        if (! isset($options['id'])) {
+            $id = uniqid('datepicker-');
+            $options['id'] = $id;
+        }
+        else {
+            $id = $options['id'];
+        }
+
+        $View->registerJs("
+            $('#".$id."').dateRangeSelector({
+                name1: '".$name1."',
+                name2: '".$name2."',
+                min: '".($options['min'] ?? '')."',
+                max: '".($options['max'] ?? '')."'
+            });
+        ");
+
+        if (! isset($options['input1Options'])) {
+            $options['input1Options'] = [];
+        }
+
+        if (! isset($options['input2Options'])) {
+            $options['input2Options'] = [];
+        }
+
+        $options['input1Options']['type'] = 'date';
+        $options['input2Options']['type'] = 'date';
+
+        return
+            self::tag('div',
+                self::textInput($name1, $value1, $options['input1Options'] ?? []). '&nbsp;'.
+                self::textInput($name2, $value2, $options['input2Options'] ?? []).
+                self::tag('div', '', ['class' => 'hidden help-block date-range-selector-error-wrapper']), [
+                    'id' => $id
+                ],
+            );
     }
 
     public static function googleButton(array $classes)
