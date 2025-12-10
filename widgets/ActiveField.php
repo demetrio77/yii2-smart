@@ -17,59 +17,79 @@ class ActiveField extends BaseActiveField
 {
 	public $options = ['tag' => 'section'];
 	public $labelOptions = ['class' => 'label'];
-	
+
 	public function textInput($options = [])
 	{
 		parent::textInput($options);
-		$this->parts['{input}'] = Html::tag('div', $this->parts['{input}'], ['class' => 'input']);	
+		$this->parts['{input}'] = Html::tag('div', $this->parts['{input}'], ['class' => 'input']);
 		return $this;
 	}
-	
+
 	public function passwordInput($options = [])
 	{
 		parent::passwordInput($options);
 		$this->parts['{input}'] = Html::tag('div', $this->parts['{input}'], ['class' => 'input']);
 		return $this;
 	}
-	
+
 	public function textarea($options = [])
 	{
 		parent::textarea($options);
 		$this->parts['{input}'] = Html::tag('div', $this->parts['{input}'], ['class' => 'textarea']);
 		return $this;
 	}
-    
+
     public function dateDropDown( $options = [])
     {
     	$this->parts['{input}'] = Html::activeDateDropDown($this->model, $this->attribute, $options);
     	return $this;
     }
-    
+
     public function dateInput( $options = [])
     {
     	parent::dateInput($options);
-    	$this->parts['{input}'] = '<div class="input">'.$this->parts['{input}'].'</div>';		
+    	$this->parts['{input}'] = '<div class="input">'.$this->parts['{input}'].'</div>';
     	return $this;
     }
-    
+
     public function clockInput( $options = [])
     {
     	parent::clockInput($options);
-    	$this->parts['{input}'] = '<div class="input">'.$this->parts['{input}'].'</div>';		
+    	$this->parts['{input}'] = '<div class="input">'.$this->parts['{input}'].'</div>';
     	return $this;
     }
-    
+
     public function dateTimeInput( $options = [])
     {
     	parent::dateTimeInput($options);
-    	$this->parts['{input}'] = '<div class="input">'.$this->parts['{input}'].'</div>';		
+    	$this->parts['{input}'] = '<div class="input">'.$this->parts['{input}'].'</div>';
     	return $this;
     }
-    
+
     public function numberInput($options=[])
     {
      	parent::numberInput($options);
         $this->parts['{input}'] = Html::tag('div', $this->parts['{input}'], ['class' => 'input']);
     	return $this;
+    }
+
+    public function secureText($options = [], $configId = 0): ActiveField
+    {
+        $name = $options['name'] ?? Html::getInputName($this->model, $this->attribute);
+        $value = $options['value'] ?? Html::getAttributeValue($this->model, $this->attribute);
+
+        $this->parts['{input}'] = Html::secureText($name, $value, $options, $configId);
+
+        return $this;
+    }
+
+    public function secureInput($options = [], $configId = 0): ActiveField
+    {
+        $name = $options['name'] ?? Html::getInputName($this->model, $this->attribute);
+        $value = $options['value'] ?? Html::getAttributeValue($this->model, $this->attribute);
+
+        $this->parts['{input}'] = Html::secureInput($name, $value, $options, $configId);
+
+        return $this;
     }
 }

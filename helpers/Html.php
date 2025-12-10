@@ -1,6 +1,7 @@
 <?php
 namespace yii\helpers;
 
+use demetrio77\smartadmin\assets\SecureStorageAsset;
 use Yii;
 use demetrio77\smartadmin\assets\Select2Asset;
 use demetrio77\smartadmin\assets\DateDropDownAsset;
@@ -310,5 +311,41 @@ class Html extends DkBaseHtml
             $options['multiple'] = true;
             return self::select2($name, $value, $items, $options);
         }
+    }
+
+    public static function secureText($name, $value = null, $options = [], $configId = 0): string
+    {
+        $displayValue = (!empty($value) ? '******' : 'no password');
+
+        $view = \Yii::$app->getView();
+        SecureStorageAsset::register( $view );
+
+        return $view->render('@demetrio77/smartadmin/views/secure-storage/secure-text', [
+            'name' => $name,
+            'value' => $value,
+            'displayValue' => $displayValue,
+            'configId' => $configId,
+        ]);
+    }
+
+    public static function secureInput($name, $value = null, $options = [], $configId = 0): string
+    {
+        $displayValue = (!empty($value) ? '******' : 'no password');
+
+        parent::textInput($options);
+
+        $view = \Yii::$app->getView();
+        SecureStorageAsset::register($view);
+
+        $view->on(\yii\web\View::EVENT_END_BODY, function () use ($view) {
+            echo $view->render('@demetrio77/smartadmin/views/secure-storage/_set-password-modal');
+        });
+
+        return $view->render('@demetrio77/smartadmin/views/secure-storage/secure-input', [
+            'name' => $name,
+            'value' => $value,
+            'displayValue' => $displayValue,
+            'configId' => $configId,
+        ]);
     }
 }
