@@ -1,11 +1,9 @@
 <?php
 namespace yii\helpers;
 
-use demetrio77\smartadmin\assets\SecureStorageAsset;
+use demetrio77\smartadmin\assets\SecurePasswordAsset;
 use Yii;
 use demetrio77\smartadmin\assets\Select2Asset;
-use demetrio77\smartadmin\assets\DateDropDownAsset;
-use demetrio77\smartadmin\assets\DateTimePickerAsset;
 use demetrio77\smartadmin\helpers\DkBaseHtml;
 use yii\web\View;
 
@@ -317,10 +315,10 @@ class Html extends DkBaseHtml
     {
         $displayValue = (!empty($value) ? '******' : 'no password');
 
-        $view = \Yii::$app->getView();
-        SecureStorageAsset::register( $view );
+        $view = Yii::$app->getView();
+        SecurePasswordAsset::register( $view );
 
-        return $view->render('@demetrio77/smartadmin/views/secure-storage/secure-text', [
+        return $view->render('@demetrio77/smartadmin/views/secure-password/secure-text', [
             'name' => $name,
             'value' => $value,
             'displayValue' => $displayValue,
@@ -334,14 +332,14 @@ class Html extends DkBaseHtml
 
         parent::textInput($options);
 
-        $view = \Yii::$app->getView();
-        SecureStorageAsset::register($view);
+        $view = Yii::$app->getView();
+        SecurePasswordAsset::register($view);
 
         $view->on(\yii\web\View::EVENT_END_BODY, function () use ($view) {
-            echo $view->render('@demetrio77/smartadmin/views/secure-storage/_set-password-modal');
+            echo $view->render('@demetrio77/smartadmin/views/secure-password/_set-password-modal');
         });
 
-        return $view->render('@demetrio77/smartadmin/views/secure-storage/secure-input', [
+        return $view->render('@demetrio77/smartadmin/views/secure-password/secure-input', [
             'name' => $name,
             'value' => $value,
             'displayValue' => $displayValue,

@@ -1,5 +1,4 @@
 
-
 function getPassword($this, name, configId, responseFunc) {
 
     let csrfParam = $('meta[name="csrf-param"]').attr('content');
@@ -7,16 +6,39 @@ function getPassword($this, name, configId, responseFunc) {
     let passwordId = $('input[name="' + name + '"]').val();
 
     $.ajax({
-        url: '/secure-storage/default/get-password?passwordId=' + passwordId + '&configId=' + configId,
+        url: '/secure-password/get-password?passwordId=' + passwordId + '&configId=' + configId,
         data: {
             csrfParam:csrfToken
         },
         method: 'GET',
         success: (resp) => {
-            responseFunc(resp);
+            if (resp.twofa_status !== undefined) {
+                switch(resp.twofa_status) {
+                    case 'success':
+                        location.reload();
+                        break;
+                    case 'user_is_pending':
+                        alert('User status "pending". Access Denied');
+                        break;
+                    case '2fa':
+                    case '2fa_wait':
+                    case 'validation_failed':
+                        afterTwoFaAuthFunction = function () {
+                            getPassword($this, name, configId, responseFunc);
+                        };
+                        getTwoFaForm(configId); // 2fa-login.js
+                        break;
+                }
+            } else {
+                responseFunc(resp);
+            }
         },
         error: function(xhr, status, error) {
-            console.log(error);
+            if (xhr.responseJSON !== undefined) {
+                alert(xhr.responseJSON.message);
+            } else {
+                alert(xhr.responseText);
+            }
         }
     });
 }
@@ -67,8 +89,8 @@ $(document).on('click', '.secure-input-set-password', function() {
     return false;
 });
 
-$(document).on('click', '#setPasswordModal button[type="submit"]', function() {
-
+function createOrUpdatePassword()
+{
     let setPasswordModal = $('#setPasswordModal');
     let csrfParam = $('meta[name="csrf-param"]').attr('content');
     let csrfToken = $('meta[name="csrf-token"]').attr('content');
@@ -83,9 +105,9 @@ $(document).on('click', '#setPasswordModal button[type="submit"]', function() {
 
     let url = '';
     if (passwordId.length) {
-        url = '/secure-storage/default/update-password?passwordId=' + passwordId + '&configId=' + configId;
+        url = '/secure-password/update-password?passwordId=' + passwordId + '&configId=' + configId;
     } else {
-        url = '/secure-storage/default/create-password?configId=' + configId;
+        url = '/secure-password/create-password?configId=' + configId;
     }
     setPasswordModal.find('#errors').text('');
     $.ajax({
@@ -96,18 +118,39 @@ $(document).on('click', '#setPasswordModal button[type="submit"]', function() {
         },
         method: 'POST',
         success: (resp) => {
-            let name = setPasswordModal.data('name');
 
-            if (passwordId.length === 0) {
-                $('input[type="hidden"][name="' + name + '"]').val(resp.password_id);
+            if (resp.twofa_status !== undefined) {
+                switch(resp.twofa_status) {
+                    case 'success':
+                        location.reload();
+                        break;
+                    case 'user_is_pending':
+                        alert('User status "pending". Access Denied');
+                        break;
+                    case '2fa':
+                    case '2fa_wait':
+                    case 'validation_failed':
+                        afterTwoFaAuthFunction = function () {
+                            createOrUpdatePassword();
+                        };
+                        getTwoFaForm(configId); // 2fa-login.js
+                        break;
+                }
+            } else {
+
+                let name = setPasswordModal.data('name');
+
+                if (passwordId.length === 0) {
+                    $('input[type="hidden"][name="' + name + '"]').val(resp.password_id);
+                }
+
+                let secureInput = $('.secure-input[data-name="' + name + '"]');
+                secureInput.val(password);
+
+                $('.secure-input-set-password[data-name="' + name + '"]').text('Edit Password');
+
+                setPasswordModal.modal('hide');
             }
-
-            let secureInput = $('.secure-input[data-name="' + name + '"]');
-            secureInput.val(password);
-
-            $('.secure-input-set-password[data-name="' + name + '"]').text('Edit Password');
-
-            setPasswordModal.modal('hide');
         },
         error: function(xhr, status, error) {
             if (xhr.responseJSON !== undefined) {
@@ -117,6 +160,9 @@ $(document).on('click', '#setPasswordModal button[type="submit"]', function() {
             }
         }
     });
+}
 
+$(document).on('click', '#setPasswordModal button[type="submit"]', function() {
+    createOrUpdatePassword();
     return false;
 });
