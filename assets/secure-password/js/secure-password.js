@@ -51,9 +51,44 @@ $(document).on('click', '.secure-text-get-password', function() {
     if (configId === "") {
         configId = 0;
     }
+    $this.addClass('loading');
     getPassword($this, name, configId, function (resp) {
-        $('.secure-text[data-name="' + name + '"]').text(resp.password);
+        $this.removeClass('loading');
+        $('.secure-text-placeholder[data-name="' + name + '"]').hide();
+        $('.secure-text[data-name="' + name + '"]').text(resp.password).show();
         $this.hide();
+        $('.secure-text-hide[data-name="' + name + '"]').show();
+        $('.secure-text-copy[data-name="' + name + '"]').show();
+    });
+
+    return false;
+});
+
+$(document).on('click', '.secure-text-hide', function() {
+    let $this = $(this);
+    let name = $this.data('name');
+
+    $('.secure-text[data-name="' + name + '"]').text('').hide();
+    $('.secure-text-placeholder[data-name="' + name + '"]').show();
+    $this.hide();
+    $('.secure-text-copy[data-name="' + name + '"]').hide();
+    $('.secure-text-get-password[data-name="' + name + '"]').show();
+
+    return false;
+});
+
+$(document).on('click', '.secure-text-copy', function() {
+    let $this = $(this);
+    let name = $this.data('name');
+    let password = $('.secure-text[data-name="' + name + '"]').text();
+
+    navigator.clipboard.writeText(password).then(function() {
+        let $tooltip = $this.find('.secure-text-tooltip');
+        let originalText = $tooltip.text();
+        $tooltip.text('Copied!');
+        setTimeout(function() {
+            $tooltip.text(originalText);
+        }, 1500);
     });
 
     return false;
