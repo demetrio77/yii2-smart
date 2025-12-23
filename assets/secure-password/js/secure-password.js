@@ -12,6 +12,7 @@ function getPassword($this, name, configId, responseFunc) {
         },
         method: 'GET',
         success: (resp) => {
+            $this.removeClass('loading');
             if (resp.twofa_status !== undefined) {
                 switch(resp.twofa_status) {
                     case 'success':
@@ -26,7 +27,7 @@ function getPassword($this, name, configId, responseFunc) {
                         afterTwoFaAuthFunction = function () {
                             getPassword($this, name, configId, responseFunc);
                         };
-                        getTwoFaForm(configId); // 2fa-login.js
+                        getTwoFaForm(configId, resp.twofa_status); // 2fa-login.js
                         break;
                 }
             } else {
@@ -156,16 +157,23 @@ $(document).on('click', '.secure-input-set-password', function() {
         ],
         afterLoad: function() {
             let $input = modal.body.find('input[name="modal-password"]');
-            let passwordId = $('input[type="hidden"][name="' + name + '"]').val();
+            let $secureInput = $('.secure-input[data-name="' + name + '"]');
+            let existingPassword = $secureInput.is(':visible') ? $secureInput.val() : '';
 
-            if (passwordId && passwordId.length > 0) {
-                $btn.addClass('loading');
-                getPassword($btn, name, configId, function(resp) {
-                    $btn.removeClass('loading');
-                    $input.val(resp.password).attr('placeholder', '');
-                });
+            if (existingPassword) {
+                // Password is already visible on screen - use it
+                $input.val(existingPassword).attr('placeholder', '');
             } else {
-                $input.val('').attr('placeholder', 'Enter password');
+                let passwordId = $('input[type="hidden"][name="' + name + '"]').val();
+                if (passwordId && passwordId.length > 0) {
+                    $btn.addClass('loading');
+                    getPassword($btn, name, configId, function(resp) {
+                        $btn.removeClass('loading');
+                        $input.val(resp.password).attr('placeholder', '');
+                    });
+                } else {
+                    $input.val('').attr('placeholder', 'Enter password');
+                }
             }
         }
     });
@@ -209,7 +217,7 @@ function savePassword(modal, name, configId) {
                         afterTwoFaAuthFunction = function () {
                             savePassword(modal, name, configId);
                         };
-                        getTwoFaForm(configId);
+                        getTwoFaForm(configId, resp.twofa_status);
                         break;
                 }
             } else {
