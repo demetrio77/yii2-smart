@@ -22,7 +22,7 @@ class Html extends DkBaseHtml
 			    <div class="jarviswidget jarviswidget-color-darken" id="wid-id-'.($options['id'] ?? uniqid()).'" data-widget-editbutton="false" data-widget-deletebutton="false" data-widget-sortable="false">
 			<header><h2 class="font-md">'.($options['title'] ?? '').'</h2></header>
 			<div>
-				<div class="jarviswidget-editbox"></div>						
+				<div class="jarviswidget-editbox"></div>
     			<div class="widget-body no-padding">';
 		}
 
@@ -250,7 +250,7 @@ class Html extends DkBaseHtml
     	        url: '".Url::toRoute($url)."',
     	        dataType: 'json',
     	        quietMillis: 250,
-    	        data: function (term, page) { 
+    	        data: function (term, page) {
                     return {
     	               q: term, //search term
     	               page: page // page number
@@ -258,9 +258,9 @@ class Html extends DkBaseHtml
                 },
     	        results: function (data, page) {
     	           var more = $itemsOnPage == data.total_count; // whether or not there are more results available
-    	           return { 
-                        results: data.items, 
-                        more: more 
+    	           return {
+                        results: data.items,
+                        more: more
                    };
     	        },
     	        cache: true
@@ -326,7 +326,7 @@ class Html extends DkBaseHtml
         ]);
     }
 
-    public static function secureInput($name, $value = null, $options = [], $configId = 0): string
+    public static function secureInput($name, $value = null, $options = [], $configId = 0, $hasAccess = true): string
     {
         $displayValue = (!empty($value) ? '******' : 'no password');
 
@@ -335,15 +335,12 @@ class Html extends DkBaseHtml
         $view = Yii::$app->getView();
         SecurePasswordAsset::register($view);
 
-        $view->on(\yii\web\View::EVENT_END_BODY, function () use ($view) {
-            echo $view->render('@demetrio77/smartadmin/views/secure-password/_set-password-modal');
-        });
-
         return $view->render('@demetrio77/smartadmin/views/secure-password/secure-input', [
             'name' => $name,
             'value' => $value,
             'displayValue' => $displayValue,
             'configId' => $configId,
+            'hasAccess' => $hasAccess,
         ]);
     }
 }

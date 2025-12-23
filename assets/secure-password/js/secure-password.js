@@ -34,6 +34,7 @@ function getPassword($this, name, configId, responseFunc) {
             }
         },
         error: function(xhr, status, error) {
+            $this.removeClass('loading');
             if (xhr.responseJSON !== undefined) {
                 alert(xhr.responseJSON.message);
             } else {
@@ -65,11 +66,20 @@ $(document).on('click', '.secure-input-get-password', function() {
     if (configId === "") {
         configId = 0;
     }
+    $this.addClass('loading');
     getPassword($this, name, configId, function (resp) {
+        $this.removeClass('loading');
         if (resp.password.length > 0) {
-            $('.secure-input[data-name="' + name + '"]').val(resp.password);
+            let $input = $('.secure-input[data-name="' + name + '"]');
+            let $placeholder = $('.secure-input-placeholder[data-name="' + name + '"]');
+            $placeholder.hide();
+            $input.val(resp.password).show();
             $this.hide();
-            $('.secure-input-set-password[data-name="' + name + '"]').text('Edit Password').show();
+            $('.secure-input-copy[data-name="' + name + '"]').show();
+            let $setBtn = $('.secure-input-set-password[data-name="' + name + '"]');
+            $setBtn.attr('title', 'Edit Password').find('.secure-input-tooltip').text('Edit Password');
+            $setBtn.show();
+            checkSecureInputOverflow($input);
         }
     });
 
@@ -77,48 +87,79 @@ $(document).on('click', '.secure-input-get-password', function() {
 });
 
 $(document).on('click', '.secure-input-set-password', function() {
-    let setPasswordModal = $('#setPasswordModal');
+    let $btn = $(this);
+    let name = $btn.data('name');
+    let configId = $btn.data('config-id');
+    if (configId === "") {
+        configId = 0;
+    }
 
-    setPasswordModal.attr('data-name', $(this).data('name'));
-    setPasswordModal.attr('data-config-id', $(this).data('config-id'));
+    let modal = new dkmodal({ width: '500px' });
+    modal.message({
+        title: 'Set Password',
+        html: '<section style="margin-bottom: 15px;">' +
+              '<input type="text" class="form-control" name="modal-password" value="" placeholder="Loading...">' +
+              '</section>' +
+              '<div class="secure-modal-warning" style="color: #8a6d3b; background: #fcf8e3; padding: 10px; border-radius: 3px; margin-bottom: 10px; font-size: 12px;">' +
+              '<strong>Warning:</strong> The password will be saved immediately. Previous value will be overwritten even if the integration form is not saved.' +
+              '</div>' +
+              '<div class="secure-modal-errors" style="color: red; margin-bottom: 10px;"></div>',
+        buttons: [
+            {
+                type: 'function',
+                caption: 'Save',
+                id: 'save-password',
+                loading: 'Saving...',
+                action: function() {
+                    savePassword(modal, name, configId);
+                }
+            },
+            {
+                type: 'dismiss',
+                caption: 'Close'
+            }
+        ],
+        afterLoad: function() {
+            let $input = modal.body.find('input[name="modal-password"]');
+            let passwordId = $('input[type="hidden"][name="' + name + '"]').val();
 
-    setPasswordModal.modal({
-        keyboard: true
+            if (passwordId && passwordId.length > 0) {
+                $btn.addClass('loading');
+                getPassword($btn, name, configId, function(resp) {
+                    $btn.removeClass('loading');
+                    $input.val(resp.password).attr('placeholder', '');
+                });
+            } else {
+                $input.val('').attr('placeholder', 'Enter password');
+            }
+        }
     });
 
     return false;
 });
 
-function createOrUpdatePassword()
-{
-    let setPasswordModal = $('#setPasswordModal');
-    let csrfParam = $('meta[name="csrf-param"]').attr('content');
+function savePassword(modal, name, configId) {
     let csrfToken = $('meta[name="csrf-token"]').attr('content');
-    let password = $.trim(setPasswordModal.find('input[name="password"]').val());
-
-    let name = setPasswordModal.data('name');
+    let password = $.trim(modal.body.find('input[name="modal-password"]').val());
     let passwordId = $('input[type="hidden"][name="' + name + '"]').val();
-    let configId = setPasswordModal.data('config-id');
-    if (configId === "") {
-        configId = 0;
-    }
 
     let url = '';
-    if (passwordId.length) {
+    if (passwordId && passwordId.length) {
         url = '/secure-password/update-password?passwordId=' + passwordId + '&configId=' + configId;
     } else {
         url = '/secure-password/create-password?configId=' + configId;
     }
-    setPasswordModal.find('#errors').text('');
+
+    modal.body.find('.secure-modal-errors').text('');
+
     $.ajax({
         url: url,
         data: {
-            csrfParam:csrfToken,
+            csrfParam: csrfToken,
             password: password
         },
         method: 'POST',
         success: (resp) => {
-
             if (resp.twofa_status !== undefined) {
                 switch(resp.twofa_status) {
                     case 'success':
@@ -131,38 +172,90 @@ function createOrUpdatePassword()
                     case '2fa_wait':
                     case 'validation_failed':
                         afterTwoFaAuthFunction = function () {
-                            createOrUpdatePassword();
+                            savePassword(modal, name, configId);
                         };
-                        getTwoFaForm(configId); // 2fa-login.js
+                        getTwoFaForm(configId);
                         break;
                 }
             } else {
-
-                let name = setPasswordModal.data('name');
-
-                if (passwordId.length === 0) {
+                if (!passwordId || passwordId.length === 0) {
                     $('input[type="hidden"][name="' + name + '"]').val(resp.password_id);
                 }
 
-                let secureInput = $('.secure-input[data-name="' + name + '"]');
-                secureInput.val(password);
+                let $secureInput = $('.secure-input[data-name="' + name + '"]');
+                let $placeholder = $('.secure-input-placeholder[data-name="' + name + '"]');
+                let $block = $secureInput.closest('.secure-input-block');
+                $placeholder.hide();
+                $secureInput.val(password).show();
+                checkSecureInputOverflow($secureInput);
 
-                $('.secure-input-set-password[data-name="' + name + '"]').text('Edit Password');
+                let $setBtn = $('.secure-input-set-password[data-name="' + name + '"]');
+                $setBtn.attr('title', 'Edit Password').find('.secure-input-tooltip').text('Edit Password');
 
-                setPasswordModal.modal('hide');
+                $('.secure-input-copy[data-name="' + name + '"]').show();
+
+                $block.addClass('updated');
+                setTimeout(function() {
+                    $block.removeClass('updated');
+                }, 3000);
+
+                modal.close();
             }
         },
-        error: function(xhr, status, error) {
+        error: function(xhr) {
+            modal.buttons.get('save-password').button('reset');
             if (xhr.responseJSON !== undefined) {
-                setPasswordModal.find('#errors').text(xhr.responseJSON.message);
+                modal.body.find('.secure-modal-errors').text(xhr.responseJSON.message);
             } else {
-                setPasswordModal.find('#errors').text('an error occurred');
+                modal.body.find('.secure-modal-errors').text('An error occurred');
             }
         }
     });
 }
 
-$(document).on('click', '#setPasswordModal button[type="submit"]', function() {
-    createOrUpdatePassword();
+$(document).on('click', '.secure-input-copy', function() {
+    let $this = $(this);
+    let name = $this.data('name');
+    let password = $('.secure-input[data-name="' + name + '"]').val();
+
+    navigator.clipboard.writeText(password).then(function() {
+        let $tooltip = $this.find('.secure-input-tooltip');
+        let originalText = $tooltip.text();
+        $tooltip.text('Copied!');
+        setTimeout(function() {
+            $tooltip.text(originalText);
+        }, 1500);
+    });
+
     return false;
+});
+
+function checkSecureInputOverflow($input) {
+    let $block = $input.closest('.secure-input-block');
+    if ($input[0].scrollWidth > $input[0].clientWidth) {
+        $block.addClass('has-overflow');
+    } else {
+        $block.removeClass('has-overflow');
+    }
+}
+
+$(document).on('mouseenter', '.secure-input', function() {
+    let $input = $(this);
+    let $block = $input.closest('.secure-input-block');
+    if (!$block.hasClass('has-overflow')) return;
+
+    let scrollAmount = $input[0].scrollWidth - $input[0].clientWidth;
+    let duration = Math.max(scrollAmount * 15, 500);
+
+    $block.addClass('scrolled');
+    $input.stop().animate({ scrollLeft: scrollAmount }, duration);
+});
+
+$(document).on('mouseleave', '.secure-input', function() {
+    let $input = $(this);
+    let $block = $input.closest('.secure-input-block');
+
+    $input.stop().animate({ scrollLeft: 0 }, 300, function() {
+        $block.removeClass('scrolled');
+    });
 });

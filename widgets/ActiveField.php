@@ -87,8 +87,9 @@ class ActiveField extends BaseActiveField
     {
         $name = $options['name'] ?? Html::getInputName($this->model, $this->attribute);
         $value = $options['value'] ?? Html::getAttributeValue($this->model, $this->attribute);
+        $hasAccess = $options['hasAccess'] ?? true;
 
-        $this->parts['{input}'] = Html::secureInput($name, $value, $options, $configId);
+        $this->parts['{input}'] = Html::tag('div', Html::secureInput($name, $value, $options, $configId, $hasAccess), ['class' => 'input']);
 
         return $this;
     }
