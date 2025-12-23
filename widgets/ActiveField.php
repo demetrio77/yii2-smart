@@ -73,16 +73,6 @@ class ActiveField extends BaseActiveField
     	return $this;
     }
 
-    public function secureText($options = [], $configId = 0): ActiveField
-    {
-        $name = $options['name'] ?? Html::getInputName($this->model, $this->attribute);
-        $value = $options['value'] ?? Html::getAttributeValue($this->model, $this->attribute);
-
-        $this->parts['{input}'] = Html::secureText($name, $value, $options, $configId);
-
-        return $this;
-    }
-
     public function secureInput($options = [], $configId = 0): ActiveField
     {
         $name = $options['name'] ?? Html::getInputName($this->model, $this->attribute);
