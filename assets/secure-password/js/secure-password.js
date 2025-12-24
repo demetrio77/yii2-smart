@@ -1,18 +1,17 @@
 
-function getPassword($this, name, configId, responseFunc) {
-
-    let csrfParam = $('meta[name="csrf-param"]').attr('content');
+function getSecureTextPassword($block, responseFunc) {
     let csrfToken = $('meta[name="csrf-token"]').attr('content');
-    let passwordId = $('input[name="' + name + '"]').val();
+    let passwordId = $block.data('password-id');
+    let configId = $block.data('config-id') || 0;
 
     $.ajax({
         url: '/secure-password/get-password?passwordId=' + passwordId + '&configId=' + configId,
         data: {
-            csrfParam:csrfToken
+            csrfParam: csrfToken
         },
         method: 'GET',
         success: (resp) => {
-            $this.removeClass('loading');
+            $block.find('.secure-text-get-password').removeClass('loading');
             if (resp.twofa_status !== undefined) {
                 switch(resp.twofa_status) {
                     case 'success':
@@ -25,17 +24,17 @@ function getPassword($this, name, configId, responseFunc) {
                     case '2fa_wait':
                     case 'validation_failed':
                         afterTwoFaAuthFunction = function () {
-                            getPassword($this, name, configId, responseFunc);
+                            getSecureTextPassword($block, responseFunc);
                         };
-                        getTwoFaForm(configId, resp.twofa_status); // 2fa-login.js
+                        getTwoFaForm(configId, resp.twofa_status);
                         break;
                 }
             } else {
                 responseFunc(resp);
             }
         },
-        error: function(xhr, status, error) {
-            $this.removeClass('loading');
+        error: function(xhr) {
+            $block.find('.secure-text-get-password').removeClass('loading');
             if (xhr.responseJSON !== undefined) {
                 alert(xhr.responseJSON.message);
             } else {
@@ -47,41 +46,36 @@ function getPassword($this, name, configId, responseFunc) {
 
 $(document).on('click', '.secure-text-get-password', function() {
     let $this = $(this);
-    let name = $this.data('name');
-    let configId = $this.data('config-id');
-    if (configId === "") {
-        configId = 0;
-    }
+    let $block = $this.closest('.secure-text-block');
+
     $this.addClass('loading');
-    getPassword($this, name, configId, function (resp) {
-        $this.removeClass('loading');
-        $('.secure-text-placeholder[data-name="' + name + '"]').hide();
-        $('.secure-text[data-name="' + name + '"]').text(resp.password).show();
-        $this.hide();
-        $('.secure-text-hide[data-name="' + name + '"]').show();
-        $('.secure-text-copy[data-name="' + name + '"]').show();
+    getSecureTextPassword($block, function (resp) {
+        $block.find('.secure-text-placeholder').hide();
+        $block.find('.secure-text').text(resp.password).show();
+        $block.find('.secure-text-get-password').hide();
+        $block.find('.secure-text-hide').show();
+        $block.find('.secure-text-copy').show();
     });
 
     return false;
 });
 
 $(document).on('click', '.secure-text-hide', function() {
-    let $this = $(this);
-    let name = $this.data('name');
+    let $block = $(this).closest('.secure-text-block');
 
-    $('.secure-text[data-name="' + name + '"]').text('').hide();
-    $('.secure-text-placeholder[data-name="' + name + '"]').show();
-    $this.hide();
-    $('.secure-text-copy[data-name="' + name + '"]').hide();
-    $('.secure-text-get-password[data-name="' + name + '"]').show();
+    $block.find('.secure-text').text('').hide();
+    $block.find('.secure-text-placeholder').show();
+    $block.find('.secure-text-hide').hide();
+    $block.find('.secure-text-copy').hide();
+    $block.find('.secure-text-get-password').show();
 
     return false;
 });
 
 $(document).on('click', '.secure-text-copy', function() {
     let $this = $(this);
-    let name = $this.data('name');
-    let password = $('.secure-text[data-name="' + name + '"]').text();
+    let $block = $this.closest('.secure-text-block');
+    let password = $block.find('.secure-text').text();
 
     navigator.clipboard.writeText(password).then(function() {
         let $tooltip = $this.find('.secure-text-tooltip');
@@ -95,6 +89,50 @@ $(document).on('click', '.secure-text-copy', function() {
     return false;
 });
 
+function getSecureInputPassword($btn, name, configId, responseFunc) {
+    let csrfToken = $('meta[name="csrf-token"]').attr('content');
+    let passwordId = $('input[type="hidden"][name="' + name + '"]').val();
+
+    $.ajax({
+        url: '/secure-password/get-password?passwordId=' + passwordId + '&configId=' + configId,
+        data: {
+            csrfParam: csrfToken
+        },
+        method: 'GET',
+        success: (resp) => {
+            $btn.removeClass('loading');
+            if (resp.twofa_status !== undefined) {
+                switch(resp.twofa_status) {
+                    case 'success':
+                        location.reload();
+                        break;
+                    case 'user_is_pending':
+                        alert('User status "pending". Access Denied');
+                        break;
+                    case '2fa':
+                    case '2fa_wait':
+                    case 'validation_failed':
+                        afterTwoFaAuthFunction = function () {
+                            getSecureInputPassword($btn, name, configId, responseFunc);
+                        };
+                        getTwoFaForm(configId, resp.twofa_status);
+                        break;
+                }
+            } else {
+                responseFunc(resp);
+            }
+        },
+        error: function(xhr) {
+            $btn.removeClass('loading');
+            if (xhr.responseJSON !== undefined) {
+                alert(xhr.responseJSON.message);
+            } else {
+                alert(xhr.responseText);
+            }
+        }
+    });
+}
+
 $(document).on('click', '.secure-input-get-password', function() {
     let $this = $(this);
     let name = $this.data('name');
@@ -103,8 +141,7 @@ $(document).on('click', '.secure-input-get-password', function() {
         configId = 0;
     }
     $this.addClass('loading');
-    getPassword($this, name, configId, function (resp) {
-        $this.removeClass('loading');
+    getSecureInputPassword($this, name, configId, function (resp) {
         if (resp.password.length > 0) {
             let $input = $('.secure-input[data-name="' + name + '"]');
             let $placeholder = $('.secure-input-placeholder[data-name="' + name + '"]');
@@ -167,8 +204,7 @@ $(document).on('click', '.secure-input-set-password', function() {
                 let passwordId = $('input[type="hidden"][name="' + name + '"]').val();
                 if (passwordId && passwordId.length > 0) {
                     $btn.addClass('loading');
-                    getPassword($btn, name, configId, function(resp) {
-                        $btn.removeClass('loading');
+                    getSecureInputPassword($btn, name, configId, function(resp) {
                         $input.val(resp.password).attr('placeholder', '');
                     });
                 } else {

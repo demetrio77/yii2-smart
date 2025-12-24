@@ -311,17 +311,13 @@ class Html extends DkBaseHtml
         }
     }
 
-    public static function secureText($name, $value = null, $options = [], $configId = 0): string
+    public static function secureText($passwordId, $configId = 0): string
     {
-        $displayValue = (!empty($value) ? '******' : 'no password');
-
         $view = Yii::$app->getView();
-        SecurePasswordAsset::register( $view );
+        SecurePasswordAsset::register($view);
 
         return $view->render('@demetrio77/smartadmin/views/secure-password/secure-text', [
-            'name' => $name,
-            'value' => $value,
-            'displayValue' => $displayValue,
+            'passwordId' => $passwordId,
             'configId' => $configId,
         ]);
     }
