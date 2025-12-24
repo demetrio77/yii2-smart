@@ -1,19 +1,21 @@
 <?php
+/** @var string $id */
 /** @var string $name */
 /** @var string $value */
-/** @var string $displayValue */
+/** @var string $hiddenInput */
 /** @var int $configId */
 /** @var bool $hasAccess */
+
 $hasPassword = !empty($value);
 ?>
-<div class="secure-input-block">
+<div class="secure-input-block" data-input-id="<?= $id ?>">
     <input type="text" data-name="<?= $name ?>" value="" class="secure-input" disabled style="<?= $hasPassword ? 'display:none;' : '' ?>">
     <div class="secure-input-placeholder" data-name="<?= $name ?>" <?= $hasPassword ? '' : 'style="display:none;"' ?>>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         <span>Password is hidden</span>
     </div>
     <?php if ($hasAccess): ?>
-        <input type="hidden" name="<?= $name ?>" value="<?= $value ?>" />
+        <?= $hiddenInput ?>
         <div class="secure-input-buttons">
             <button type="button" class="secure-input-get-password secure-input-btn" data-name="<?= $name ?>" <?= ($hasPassword ? '' : 'style="display: none;"') ?> data-config-id="<?= $configId ?>" title="Get Password">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>

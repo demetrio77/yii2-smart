@@ -322,19 +322,28 @@ class Html extends DkBaseHtml
         ]);
     }
 
-    public static function secureInput($name, $value = null, $options = [], $configId = 0, $hasAccess = true): string
+    public static function activeSecureInput($model, $attribute, $options = [], $configId = 0, $hasAccess = true): string
     {
-        $displayValue = (!empty($value) ? '******' : 'no password');
+        $id = static::getInputId($model, $attribute);
+        $name = static::getInputName($model, $attribute);
+        $value = static::getAttributeValue($model, $attribute);
 
-        parent::textInput($options);
+        $inputOptions = array_merge([
+            'id' => $id,
+            'name' => $name,
+            'value' => $value,
+        ], $options);
+
+        $hiddenInput = static::activeHiddenInput($model, $attribute, $inputOptions);
 
         $view = Yii::$app->getView();
         SecurePasswordAsset::register($view);
 
         return $view->render('@demetrio77/smartadmin/views/secure-password/secure-input', [
+            'id' => $id,
             'name' => $name,
             'value' => $value,
-            'displayValue' => $displayValue,
+            'hiddenInput' => $hiddenInput,
             'configId' => $configId,
             'hasAccess' => $hasAccess,
         ]);
