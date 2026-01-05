@@ -258,7 +258,7 @@ function savePassword(modal, name, configId) {
                 }
             } else {
                 if (!passwordId || passwordId.length === 0) {
-                    $('input[type="hidden"][name="' + name + '"]').val(resp.password_id);
+                    $('input[type="hidden"][name="' + name + '"]').val(resp.password_id).change();
                 }
 
                 let $secureInput = $('.secure-input[data-name="' + name + '"]');
