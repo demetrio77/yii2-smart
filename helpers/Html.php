@@ -153,7 +153,7 @@ class Html extends DkBaseHtml
 		return parent::activeSelect2($model, $attribute, $items, $options);
 	}
 
-	public function remoteDropDown($name, $value, $url = [], $options = [])
+	public static function remoteDropDown($name, $value, $url = [], $options = [])
 	{
 	    $view = Yii::$app->getView();
 	    \demetrio77\smartadmin\assets\Select2Asset::register( $view );
@@ -217,7 +217,7 @@ class Html extends DkBaseHtml
 	        return self::textInput($name, $value, $options);
 	}
 
-	public function activeRemoteDropDown($model, $attribute, $url = [], $options = [])
+	public static function activeRemoteDropDown($model, $attribute, $url = [], $options = [])
 	{
 	    $id = self::getInputId($model, $attribute);
 	    $view = Yii::$app->getView();
